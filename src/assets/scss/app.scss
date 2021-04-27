@@ -1,0 +1,20 @@
+@import "./shared";
+@include reset;
+@include container;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  //color: var(--color-text);
+  //background-color: var(--color-background) !important;
+}
+
+#app {
+  position: relative;
+  height: 100%;
+}

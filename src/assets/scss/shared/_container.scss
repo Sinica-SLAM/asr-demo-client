@@ -1,0 +1,16 @@
+@mixin container {
+  .page-container {
+    width: 100%;
+    min-width: 100vw;
+    min-height: 100vh;
+    transition-property: transform, opacity;
+    transition-duration: 0.3s;
+    transition-timing-function: ease-out;
+  }
+}
+
+@mixin page($id) {
+  #app ##{$id}.page-container {
+    @content;
+  }
+}

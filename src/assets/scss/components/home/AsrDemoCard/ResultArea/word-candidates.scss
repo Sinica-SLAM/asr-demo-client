@@ -1,0 +1,46 @@
+.candidates-container {
+  position: absolute;
+  border-radius: 5px;
+  background-color: rgb(60, 145, 255);
+  padding: 5px;
+  font-size: 1rem;
+  z-index: 20;
+  cursor: auto;
+
+  .candidate {
+    display: flex;
+    flex-direction: row;
+    .candidate-word {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+    color: white;
+  }
+  .candidates-container-arrow {
+    content: none;
+    position: absolute;
+    border: 0.5rem solid transparent;
+    margin: 0rem;
+    left: calc(50% - 0.5rem);
+  }
+
+  &-up {
+    transform: translate(-50%, 0%);
+    left: 50%;
+    bottom: calc(100% + 10px);
+    .candidates-container-arrow {
+      top: 100%;
+      border-top-color: rgb(60, 145, 255);
+    }
+  }
+
+  &-down {
+    transform: translate(-50%, 0%);
+    left: 50%;
+    top: calc(100% + 8px);
+    .candidates-container-arrow {
+      bottom: 100%;
+      border-bottom-color: rgb(60, 145, 255);
+    }
+  }
+}

@@ -1,0 +1,27 @@
+#demo-card-container {
+  box-shadow: 0 0 15px 0 rgba(217, 217, 217, 0.66);
+  max-width: 1040px;
+  height: 85%;
+  padding: 54px 100px 10px 100px;
+  margin: 30px auto 0px auto;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  .controller-container {
+    display: flex;
+    justify-content: center;
+    .svg-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      background-color: royalblue;
+      cursor: pointer;
+      &:hover {
+        background-color: rgb(53, 86, 184);
+      }
+    }
+  }
+}

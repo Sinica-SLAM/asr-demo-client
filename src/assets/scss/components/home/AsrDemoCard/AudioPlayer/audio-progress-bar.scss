@@ -1,0 +1,65 @@
+$progress-bar-height: 5px;
+.audio-progress-bar-container {
+  width: 100%;
+  .audio-progress-bar {
+    z-index: 1;
+    height: $progress-bar-height;
+    position: relative;
+    background-color: rgb(218, 218, 218);
+
+    .progress-indicator {
+      z-index: 4;
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background-color: rgb(60, 145, 255);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      top: $progress-bar-height/2;
+      .time-code-box {
+        font-size: 0.8em;
+        padding: 4px;
+        border-radius: 5px;
+        background-color: rgb(60, 145, 255);
+        transform: translate(-50%, -100%);
+        left: 7px;
+        bottom: 10%;
+        position: absolute;
+        div {
+          color: white;
+          display: inline-block;
+          white-space: nowrap;
+        }
+        .time-code-box-arrow {
+          content: none;
+          position: absolute;
+          border: 0.5rem solid transparent;
+          margin: 0rem;
+          border-top-color: rgb(60, 145, 255);
+
+          top: 100%;
+          left: calc(50% - 0.5rem);
+        }
+      }
+    }
+    .current-progress {
+      z-index: 3;
+      position: absolute;
+      background-color: rgb(60, 145, 255);
+      height: $progress-bar-height;
+    }
+    .hover-progress {
+      z-index: 2;
+      position: absolute;
+      left: 0;
+      background-color: rgb(190, 190, 190);
+      height: $progress-bar-height;
+      display: none;
+    }
+    &:hover {
+      .hover-progress {
+        display: initial;
+      }
+    }
+  }
+}

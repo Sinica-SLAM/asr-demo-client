@@ -1,0 +1,15 @@
+@import "../shared";
+
+@include page("home") {
+  height: 100vh;
+  #select-container {
+    display: flex;
+    max-width: 30%;
+    justify-content: space-between;
+    padding: 10px 0px;
+    margin: auto;
+    select {
+      font-size: 1rem;
+    }
+  }
+}

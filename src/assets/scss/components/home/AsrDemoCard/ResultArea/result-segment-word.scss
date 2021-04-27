@@ -1,0 +1,24 @@
+.word-container {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  padding-bottom: 2px;
+  ruby {
+    display: inline-flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-bottom: 4px;
+    rt {
+      padding-left: 2px;
+      display: inline;
+      line-height: 1;
+    }
+  }
+}
+.underline {
+  background-image: linear-gradient(rgb(170, 0, 0), rgb(170, 0, 0));
+  background-position: bottom 5px center; /*Adjust the background-position to move the line*/
+  background-size: calc(100% - 4px) 2px; /*Adjust the background size to control length and height*/
+  background-repeat: no-repeat;
+  padding-bottom: 2px; /* this can also control the position */
+}
