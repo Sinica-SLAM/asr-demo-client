@@ -78,18 +78,15 @@ class Dictate {
         type: "audio",
         recorderType: StereoAudioRecorder,
         timeSlice: this.interval,
-        sampleRate: 44100,
         desiredSampRate: 16000,
         numberOfAudioChannels: 1,
         bufferSize: 16384,
         mimeType: "audio/wav",
-        ondataavailable: (data) => {
-          if (this.ws?.readyState === 1) {
-            data
-              .slice(44)
-              .arrayBuffer()
-              .then((arrayBuffer) => this.ws?.send(arrayBuffer));
-          }
+        ondataavailable: async (data) => {
+          data
+            .slice(44)
+            .arrayBuffer()
+            .then((arrayBuffer) => this.ws?.send(arrayBuffer));
         },
       });
     } catch (e) {
