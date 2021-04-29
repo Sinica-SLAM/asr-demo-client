@@ -178,10 +178,10 @@ interface WSResponse {
 }
 
 export interface WordAlignment {
-  start: number;
-  length: number;
+  start?: number;
+  length?: number;
   word: string;
-  confidence: number;
+  confidence?: number;
 }
 
 export interface Hypothesis {

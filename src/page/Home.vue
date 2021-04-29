@@ -21,7 +21,7 @@
           :key="model.port"
           :value="model.port"
         >
-          {{ model.displayName }}
+          {{ model.name }}
         </option>
       </select>
     </div>
@@ -57,12 +57,10 @@ export default defineComponent({
     const defaultOption = {
       models: [
         {
-          displayName: "mandarinE_16k",
-          name: "mandarinE",
+          name: "mandarinE_16k",
           port: 8888,
         },
         {
-          displayName: "taigiE_fsr",
           name: "taigiE_fsr",
           port: 8889,
         },
@@ -71,8 +69,7 @@ export default defineComponent({
 
     const asrType = reactive({
       port: 8888,
-      name: "mandarinE",
-      displayName: "mandarinE_16k",
+      name: "mandarinE_16k",
     });
 
     watchEffect(() => {

@@ -34,14 +34,12 @@
           @click="(v) => emit('wordClicked', v)"
         />
       </div>
-      <div
-        v-if="isRecognize && recongnizeWordAlignment.length > 0"
-        class="post"
-      >
-        <div class="status-container post">
+
+      <div v-if="isRecognize && recongnizeWordAlignment.length > 0" class="sub">
+        <div class="status-container p">
           <div>P</div>
         </div>
-        <div class="text-container ">
+        <div class="text-container post">
           <ResultSegmentWord
             v-for="(alignment, i) in recongnizeWordAlignment"
             :key="alignment.word + i + 'r'"
@@ -49,6 +47,20 @@
             :segmentStart="props.segmentStart.getTime() / 1000"
             :tokens="recongnizeTokens[i]"
             @click="(v) => emit('wordClicked', v)"
+          />
+        </div>
+      </div>
+
+      <div v-if="isTranslated" class="sub">
+        <div class="status-container t">
+          <div>T</div>
+        </div>
+        <div class="text-container translate">
+          <ResultSegmentWord
+            v-for="(alignment, i) in translateWordAlignment"
+            :key="alignment.word + i + 't'"
+            :word="alignment"
+            :segmentStart="props.segmentStart.getTime() / 1000"
           />
         </div>
       </div>
@@ -73,6 +85,7 @@ import { WordAlignment } from "@/utils/dictate";
 import { timeFormat } from "@/utils/timeFormat";
 import { Candidate } from "@/utils/candidates";
 import ResultSegmentWord from "@/components/home/AsrDemoCard/ResultArea/ResultSegmentWord.vue";
+import axios from "axios";
 
 export default defineComponent({
   name: "AsrDemoSegment",
@@ -126,6 +139,9 @@ export default defineComponent({
     const recongnizeWordAlignment: Ref<WordAlignment[]> = ref([]);
     const recongnizeTokens: Ref<string[][]> = ref([]);
 
+    const isTranslated = ref(false);
+    const translateWordAlignment: Ref<WordAlignment[]> = ref([]);
+
     watchEffect(async () => {
       if (props.completed) {
         const data: {
@@ -150,6 +166,30 @@ export default defineComponent({
         isRecognize.value = true;
       }
     });
+
+    watchEffect(async () => {
+      if (isRecognize.value && recongnizeWordAlignment.value.length > 0) {
+        const src = props.modelName.split("E")[0];
+        const trg = src === "mandarin" ? "taigi" : "mandarin";
+        const text = recongnizeWordAlignment.value
+          .map((word) => word.word.replace(/<|>/, ""))
+          .join(" ");
+
+        const translatedText = (
+          await axios.post("https://140.109.16.218:8080/translate", {
+            src,
+            trg,
+            text,
+          })
+        ).data.result as string;
+
+        translateWordAlignment.value = translatedText.split(" ").map((s) => ({
+          word: s,
+        }));
+
+        isTranslated.value = true;
+      }
+    });
     return {
       props,
       startTimeCode,
@@ -158,6 +198,8 @@ export default defineComponent({
       emit,
       recongnizeWordAlignment,
       recongnizeTokens,
+      isTranslated,
+      translateWordAlignment,
     };
   },
 });

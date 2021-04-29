@@ -49,6 +49,13 @@
         border: 1.5px rgb(0, 0, 170) solid;
       }
     }
+
+    &.t {
+      div {
+        background-color: #43dd5d;
+        border: 1.5px #00af1d solid;
+      }
+    }
   }
   .result-container {
     display: flex;
@@ -60,17 +67,26 @@
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
+      padding-bottom: 2px;
+
+      &.post {
+        .underline {
+          background-image: linear-gradient(rgb(0, 68, 170), rgb(0, 68, 170));
+        }
+      }
+      &.translate {
+        .underline {
+          background-image: linear-gradient(rgb(0, 170, 37), rgb(0, 170, 37));
+        }
+      }
     }
-    .post {
+    .sub {
       position: relative;
       display: flex;
       flex-direction: row;
       .status-container {
         position: absolute;
         transform: translate(-100%, 0%);
-      }
-      .underline {
-        background-image: linear-gradient(rgb(0, 68, 170), rgb(0, 68, 170));
       }
     }
   }
