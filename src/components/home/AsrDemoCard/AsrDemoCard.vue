@@ -1,6 +1,8 @@
 <template>
   <div id="demo-card-container">
-    <div class="title-container"></div>
+    <div class="title-container">
+      <div>{{props.modelName}}</div>
+    </div>
     <ResultArea
       :segments="segments"
       :modelName="props.modelName"
@@ -18,9 +20,9 @@
         @click="
           () => {
             if (recording) {
-              dicatate.stopListening().then((url) => (audioURL = url));
+              dictate.stopListening().then((url) => (audioURL = url));
             } else {
-              dicatate.startListening(props.port);
+              dictate.startListening(props.port);
             }
             recording = !recording;
           }
@@ -43,7 +45,7 @@ import microphoneSVG from "@/assets/svg/microphone.svg";
 import stopSVG from "@/assets/svg/stop.svg";
 import { Segment } from "@/components/home/AsrDemoCard/asrDemoCard";
 import ResultArea from "@/components/home/AsrDemoCard/ResultArea/ResultArea.vue";
-import { getCandidates, getCandidatesFlat } from "@/utils/candidates";
+import { getCandidates } from "@/utils/candidates";
 
 export default defineComponent({
   name: "AsrDemoCard",
@@ -68,13 +70,13 @@ export default defineComponent({
     const segmentFinal = ref(true);
     const audioURL = ref<string>();
     const audioPlayer = ref<InstanceType<typeof AudioPlayer>>();
-    const dicatate = new Dictate({
+    const dictate = new Dictate({
       onResult: async (result) => {
         if (result?.adaptation_state) {
-          if (dicatate.recording) {
-            audioURL.value = await dicatate.stopListening();
+          if (dictate.recording) {
+            audioURL.value = await dictate.stopListening();
           }
-          dicatate.destroy();
+          dictate.destroy();
           recording.value = false;
 
           return;
@@ -125,7 +127,7 @@ export default defineComponent({
     watch(
       () => props.port,
       () => {
-        dicatate.destroy();
+        dictate.destroy();
         recording.value = false;
         segments.length = 0;
         currentTimeCode = 0;
@@ -136,13 +138,12 @@ export default defineComponent({
 
     return {
       recording,
-      dicatate,
+      dictate,
       segments,
       audioURL,
       microphoneSVG,
       stopSVG,
       audioPlayer,
-      getCandidatesFlat,
       props,
     };
   },

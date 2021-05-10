@@ -5,7 +5,7 @@
       (e) => {
         e.preventDefault();
         emit('click', {
-          start: props.segmentStart + props.word.start,
+          start: props.start,
           length: props.word.length,
         });
       }
@@ -15,7 +15,7 @@
   >
     <ruby
       v-for="(char, charIndex) in props.word.word"
-      :key="props.segemntStart + char + props.word.start"
+      :key="props.start + char"
     >
       {{ char }}
       <rp>(</rp>
@@ -31,8 +31,9 @@
 <script lang="ts">
 import { WordAlignment } from "@/utils/dictate";
 import { defineComponent, PropType, ref } from "vue";
-import "@/assets/scss/components/home/AsrDemoCard/ResultArea/result-segment-word.scss";
+import "@/assets/scss/components/home/AsrDemoCard/ResultArea/ResultSegment/result-segment-word.scss";
 import WordCandidates from "./WordCandidates.vue";
+
 export default defineComponent({
   name: "ResultSegmentWord",
   components: {
@@ -44,7 +45,7 @@ export default defineComponent({
     },
   },
   props: {
-    segmentStart: {
+    start: {
       type: Number, // second
       required: true,
     },

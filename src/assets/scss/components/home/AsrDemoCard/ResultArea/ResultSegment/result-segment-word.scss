@@ -1,0 +1,18 @@
+.word-container {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  padding-bottom: 2px;
+  ruby {
+    display: inline-flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-bottom: 4px;
+    rt {
+      padding-left: 2px;
+      display: inline;
+      line-height: 1;
+    }
+  }
+}
+

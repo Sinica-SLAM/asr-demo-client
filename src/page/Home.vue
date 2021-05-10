@@ -25,13 +25,20 @@
         </option>
       </select>
     </div>
-    <AsrDemo :port="asrType.port" :modelName="asrType.name" />
+    <div
+      class="demo-container"
+      style="display: flex; height: 100%; align-items: center;"
+    >
+      <AsrDemo :port="asrType.port" :modelName="asrType.name" />
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent, reactive, watchEffect } from "vue";
 import AsrDemo from "@/components/home/AsrDemoCard/AsrDemoCard.vue";
+import leftArrowSvg from "@/assets/svg/left-arrow.svg";
+import rightArrowSvg from "@/assets/svg/right-arrow.svg";
 
 import "@/assets/scss/pages/home.scss";
 export default defineComponent({
@@ -78,7 +85,7 @@ export default defineComponent({
       ).name;
     });
 
-    return { defaultOption, asrType };
+    return { defaultOption, asrType, leftArrowSvg, rightArrowSvg };
   },
 });
 </script>

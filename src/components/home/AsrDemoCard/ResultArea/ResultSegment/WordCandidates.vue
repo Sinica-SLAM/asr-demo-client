@@ -20,7 +20,7 @@
 <script lang="ts">
 import { defineComponent, PropType, ref, Ref, watchEffect } from "vue";
 import { Candidate } from "@/utils/candidates";
-import "@/assets/scss/components/home/AsrDemoCard/ResultArea/word-candidates.scss";
+import "@/assets/scss/components/home/AsrDemoCard/ResultArea/ResultSegment/word-candidates.scss";
 export default defineComponent({
   name: "WordCandidates",
   props: {

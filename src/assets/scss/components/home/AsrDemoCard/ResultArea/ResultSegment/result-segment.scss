@@ -1,0 +1,32 @@
+.result-segment {
+  padding: 10px;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  font-size: 1.2rem;
+
+  .time-code-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1.03rem;
+    padding-right: 8px;
+    padding-top: 2px;
+    div {
+      text-align: center;
+      white-space: nowrap;
+    }
+    .start-time-code {
+      cursor: pointer;
+    }
+    .length-code {
+      color: rgb(116, 116, 116);
+    }
+  }
+
+  .sub-segment-container {
+    display: flex;
+    flex-direction: column;
+  }
+}

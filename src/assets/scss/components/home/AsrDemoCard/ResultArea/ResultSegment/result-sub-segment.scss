@@ -1,0 +1,67 @@
+.result-sub-segment {
+  display: flex;
+
+  .status-container {
+    padding-right: 8px;
+
+    div {
+      height: 1em;
+      width: 1em;
+      text-align: center;
+      font-size: 0.9rem;
+      color: white;
+    }
+  }
+
+    .text-container {
+      line-height: 1.6rem;
+      font-size: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding-bottom: 2px;
+    }
+
+  .underline {
+    background-position: bottom 5px center; /*Adjust the background-position to move the line*/
+    background-size: calc(100% - 4px) 2px; /*Adjust the background size to control length and height*/
+    background-repeat: no-repeat;
+    padding-bottom: 2px; /* this can also control the position */
+  }
+  &.r {
+    .status-container {
+      div {
+        background-color: rgb(255, 78, 78);
+        border: 1.5px rgb(156, 0, 0) solid;
+      }
+    }
+    .underline {
+      background-image: linear-gradient(rgb(170, 0, 0), rgb(170, 0, 0));
+    }
+  }
+
+  &.p {
+    .status-container {
+      div {
+        background-color: #6161ff;
+        border: 1.5px rgb(0, 0, 170) solid;
+      }
+    }
+    .underline {
+      background-image: linear-gradient(rgb(0, 68, 170), rgb(0, 68, 170));
+    }
+  }
+
+  &.t {
+    .status-container {
+      div {
+        background-color: #43dd5d;
+        border: 1.5px #00af1d solid;
+      }
+    }
+    .underline {
+      background-image: linear-gradient(rgb(0, 170, 37), rgb(0, 170, 37));
+    }
+  }
+}

@@ -4,12 +4,12 @@
       v-for="(segment, index) in props.segments"
       :key="'result-' + index"
       :id="segment.id"
-      :text="segment.text"
+      :rText="segment.text"
       :segmentStart="segment.segmentStart"
       :segmentLength="segment.segmentLength"
-      :wordAlignment="segment.wordAlignment"
+      :rWordAlignment="segment.wordAlignment"
       :completed="segment.completed"
-      :candidatesMap="segment.candidatesMap"
+      :rCandidatesMap="segment.candidatesMap"
       @wordClicked="(v) => emit('wordClicked', v)"
       :modelName="props.modelName"
     />
@@ -27,7 +27,9 @@ import { Segment } from "@/components/home/AsrDemoCard/asrDemoCard";
 import "@/assets/scss/components/home/AsrDemoCard/ResultArea/result-area.scss";
 
 const ResultSegment = defineAsyncComponent(() =>
-  import("@/components/home/AsrDemoCard/ResultArea/ResultSegment.vue")
+  import(
+    "@/components/home/AsrDemoCard/ResultArea/ResultSegment/ResultSegment.vue"
+  )
 );
 
 export default defineComponent({
