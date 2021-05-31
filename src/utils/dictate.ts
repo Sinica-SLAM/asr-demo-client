@@ -1,4 +1,4 @@
-import RecordRTC, { StereoAudioRecorder } from "recordrtc";
+import Recorder from "@/recorder/recorder";
 
 class Dictate {
   constructor(config?: DictateConfig) {
@@ -23,7 +23,7 @@ class Dictate {
   private interval = 100;
   private ws?: WebSocket;
   private wsServerStatus?: WebSocket;
-  private recorder?: RecordRTC;
+  private recorder?: Recorder;
   private onResult: (result: WSResponse) => Promise<void> = async () => {
     return;
   };
@@ -40,7 +40,7 @@ class Dictate {
 
   private cancel() {
     if (this.recorder) {
-      this.recorder.reset();
+      this.recorder.startRecording();
     }
     if (this.ws) {
       this.ws.close();
@@ -52,8 +52,23 @@ class Dictate {
     const url = this.server + "?" + this.contentType;
     this.ws = new WebSocket(url);
     this.ws.onmessage = async (e: MessageEvent) => {
-      const data = JSON.parse(e.data);
+      const data: WSResponse = JSON.parse(e.data);
       if (data.status === 0) {
+        if (data.result) {
+          if (data.segment == 0) {
+            return;
+          }
+          if (data.result.hypotheses[0]["word-alignment"]) {
+            if (
+              data.result.hypotheses[0]["word-alignment"].filter(
+                (w) => data["segment-start"] + w.start! + w.length! > 0.019
+              ).length == 0
+            ) {
+              return;
+            }
+          }
+        }
+
         this.onResult(data);
         if (data.adaptation_state) {
           if (this.ws?.readyState !== WebSocket.CLOSED) {
@@ -70,23 +85,14 @@ class Dictate {
   public async init() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: false,
         audio: true,
       });
 
-      this.recorder = new RecordRTC(stream, {
-        type: "audio",
-        recorderType: StereoAudioRecorder,
+      this.recorder = new Recorder(stream, {
         timeSlice: this.interval,
         desiredSampRate: 16000,
-        numberOfAudioChannels: 1,
-        bufferSize: 16384,
-        mimeType: "audio/wav",
-        ondataavailable: async (data) => {
-          data
-            .slice(44)
-            .arrayBuffer()
-            .then((arrayBuffer) => this.ws?.send(arrayBuffer));
+        ondataavailable: (data) => {
+          this.ws?.send(data);
         },
       });
     } catch (e) {
@@ -97,7 +103,7 @@ class Dictate {
     this.port = port;
 
     if (this.recorder) {
-      this.recorder.reset();
+      this.recorder.stopRecording();
     } else {
       await this.init();
     }
@@ -117,11 +123,8 @@ class Dictate {
 
   public async stopListening(): Promise<string> {
     try {
-      const url = await new Promise((r: (v: string) => void) =>
-        this.recorder?.stopRecording(() => {
-          r(this.recorder?.toURL() as string);
-        })
-      );
+      const url = URL.createObjectURL(await this.recorder?.stopRecording());
+
       this.ws?.send("EOS");
       return url;
     } catch (e) {
@@ -139,12 +142,12 @@ class Dictate {
       return;
     }
 
-    this.recorder.destroy();
+    this.recorder.stopRecording();
     this.recorder = undefined;
   }
 
   public get recording(): boolean {
-    return this.recorder?.getState() === "recording";
+    return this.recorder?.recording ?? false;
   }
 }
 
@@ -182,6 +185,7 @@ export interface WordAlignment {
   length?: number;
   word: string;
   confidence?: number;
+  token?: string;
 }
 
 export interface Hypothesis {

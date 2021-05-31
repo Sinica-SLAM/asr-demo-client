@@ -20,8 +20,8 @@
             ? props.candidatesMap.get(alignment.start)
             : undefined
         "
-        :tokens="props.tokens ? props.tokens[i] : undefined"
-        @click="canPlay ? v => emit('wordClicked', v) : () => {}"
+        :tokens="alignment.token ? alignment.token.split('-') : undefined"
+        @click="canPlay ? (v) => emit('wordClicked', v) : () => {}"
       />
     </div>
   </div>
@@ -37,42 +37,38 @@ export default defineComponent({
   emits: {
     wordClicked(payload: { start: number; length: number }) {
       return payload.start >= 0 && payload.length >= 0;
-    }
+    },
   },
   components: { ResultSegmentWord },
   props: {
     text: {
       type: String,
-      required: false
+      required: false,
     },
     wordAlignment: {
       type: Array as PropType<Array<WordAlignment>>,
-      required: false
+      required: false,
     },
     candidatesMap: {
       type: Map as PropType<Map<number, Candidate[]>>,
-      required: false
+      required: false,
     },
     type: {
       // p r t
       type: String,
-      required: true
+      required: true,
     },
     segmentStart: {
       type: Date as PropType<Date>,
-      required: true
+      required: true,
     },
     canPlay: {
       type: Boolean,
-      required: false
+      required: false,
     },
-    tokens: {
-      type: Array as PropType<Array<Array<string>>>,
-      required: false
-    }
   },
   setup(props, { emit }) {
     return { props, emit };
-  }
+  },
 });
 </script>
