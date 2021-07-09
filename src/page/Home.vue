@@ -25,12 +25,8 @@
         </option>
       </select>
     </div>
-    <div
-      class="demo-container"
-      style="display: flex; height: 100%; align-items: center;"
-    >
-      <AsrDemo :port="asrType.port" :modelName="asrType.name" />
-    </div>
+
+    <AsrDemo :port="asrType.port" :modelName="asrType.name" />
   </div>
 </template>
 
@@ -63,20 +59,21 @@ export default defineComponent({
     // };
     const defaultOption = {
       models: [
-        {
-          name: "mandarinE_16k",
-          port: 8888,
-        },
-        {
-          name: "taigiE_fsr",
-          port: 8889,
-        },
+        // {
+        //   name: "mandarinE_16k",
+        //   port: 8888,
+        // },
+        // {
+        //   name: "taigiE_fsr",
+        //   port: 8889,
+        // },
+        { name: "tailo_0630", port: 8890 },
       ],
     };
 
     const asrType = reactive({
-      port: 8888,
-      name: "mandarinE_16k",
+      port: 8890,
+      name: "tailo_0630",
     });
 
     watchEffect(() => {

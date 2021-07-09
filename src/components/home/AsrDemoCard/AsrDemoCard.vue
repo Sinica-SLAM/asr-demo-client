@@ -1,7 +1,7 @@
 <template>
   <div id="demo-card-container">
     <div class="title-container">
-      <div>{{props.modelName}}</div>
+      <div>{{ props.modelName }}</div>
     </div>
     <ResultArea
       :segments="segments"

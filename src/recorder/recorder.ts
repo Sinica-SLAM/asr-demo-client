@@ -18,7 +18,6 @@ export default class Recorder {
       }
       const data = new Float32Array(4096);
       e.inputBuffer.copyFromChannel(data, 0);
-      console.log(data);
       this.worker.record([e.inputBuffer.getChannelData(0)]);
     };
     this.source.connect(this.node);
