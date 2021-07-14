@@ -15,32 +15,34 @@
           {{ model.name }}
         </option>
       </select> -->
-      <select v-model="asrType.port">
+      <select v-model="settingStore.modulePort">
         <option
-          v-for="model in defaultOption.models"
-          :key="model.port"
-          :value="model.port"
+            v-for="model in defaultOption.models"
+            :key="model.port"
+            :value="model.port"
         >
           {{ model.name }}
         </option>
       </select>
     </div>
 
-    <AsrDemo :port="asrType.port" :modelName="asrType.name" />
+    <AsrDemoCard/>
   </div>
 </template>
 
 <script>
-import { defineComponent, reactive, watchEffect } from "vue";
-import AsrDemo from "@/components/home/AsrDemoCard/AsrDemoCard.vue";
+import {defineComponent} from "vue";
+import AsrDemoCard from "@/components/home/AsrDemoCard/AsrDemoCard.vue";
 import leftArrowSvg from "@/assets/svg/left-arrow.svg";
 import rightArrowSvg from "@/assets/svg/right-arrow.svg";
 
 import "@/assets/scss/pages/home.scss";
+import {useSettingStore} from "@/store/modules/settingStore";
+
 export default defineComponent({
   name: "Home",
   components: {
-    AsrDemo,
+    AsrDemoCard,
   },
   setup() {
     //data from backend
@@ -67,22 +69,12 @@ export default defineComponent({
         //   name: "taigiE_fsr",
         //   port: 8889,
         // },
-        { name: "tailo_0630", port: 8890 },
+        {name: "tailo_0630", port: 8890},
       ],
     };
+    const settingStore = useSettingStore()
 
-    const asrType = reactive({
-      port: 8890,
-      name: "tailo_0630",
-    });
-
-    watchEffect(() => {
-      asrType.name = defaultOption.models.find(
-        (m) => m.port === asrType.port
-      ).name;
-    });
-
-    return { defaultOption, asrType, leftArrowSvg, rightArrowSvg };
+    return {defaultOption, settingStore, leftArrowSvg, rightArrowSvg};
   },
 });
 </script>

@@ -11,7 +11,7 @@
     </div>
     <div class="text-container" v-else>
       <ResultSegmentWord
-          v-for="(alignment, i) in segment?.wordAlignment ?? []"
+          v-for="(alignment, i) in wordAlignment ?? []"
           :key="alignment.word + i + props.type"
           :alignment="alignment"
           @click="canPlay ? (v) => emit('wordClicked', v) : () => {}"
@@ -25,6 +25,7 @@ import ResultSegmentWord from "@/components/home/AsrDemoCard/ResultArea/ResultSe
 import "@/assets/scss/components/home/AsrDemoCard/ResultArea/ResultSegment/result-sub-segment.scss";
 import {computed, PropType} from "vue";
 import {useMainResultStore} from "@/store/modules/mainResultStore";
+import {usePostResultStore} from "@/store/modules/postResultStore";
 
 export default defineComponent({
   name: "ResultSubSegment",
@@ -54,18 +55,20 @@ export default defineComponent({
     },
   },
   setup(props, {emit}) {
-    const segment = computed(() => {
+    const wordAlignment = computed(() => {
       if (typeof props.index === "undefined") {
         return undefined
       }
       switch (props.type) {
         case "r":
-          return useMainResultStore().segments[props.index]
+          return useMainResultStore().segments[props.index].wordAlignment
+        case "p":
+          return usePostResultStore().wordAlignments[props.index]
         default:
-          return useMainResultStore().segments[props.index]
+          return useMainResultStore().segments[props.index].wordAlignment
       }
     })
-    return {props, emit, segment};
+    return {props, emit, wordAlignment};
   },
 });
 </script>

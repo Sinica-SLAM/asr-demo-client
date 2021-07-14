@@ -2,6 +2,7 @@ import {Segment} from "@/components/home/AsrDemoCard/asrDemoCard";
 import {defineStore} from "pinia";
 import {WSResponse} from "@/utils/dictate";
 import {getCandidates} from "@/utils/candidates";
+import {usePostResultStore} from "@/store/modules/postResultStore";
 
 interface mainResultState {
   tempText: string,
@@ -11,7 +12,8 @@ interface mainResultState {
 }
 
 export const useMainResultStore = defineStore({
-  id: "mainResultStore", state: (): mainResultState => ({
+  id: "mainResultStore",
+  state: (): mainResultState => ({
     tempText: "",
     segments: [],
     currentTimeCode: 0,
@@ -43,9 +45,9 @@ export const useMainResultStore = defineStore({
         segmentLength: res["segment-length"] * 1000,
 
       })
+      usePostResultStore().appendFromAPI(res.id, this.currentTimeCode, res["segment-length"] * 1000)
       this.currentTimeCode += res["segment-length"] * 1000
       this.tempText = ""
-      console.log(this.segments)
     },
     changeTempText(text: string) {
       this.tempText = text

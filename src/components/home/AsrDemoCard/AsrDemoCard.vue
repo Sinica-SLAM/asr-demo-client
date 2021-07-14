@@ -1,10 +1,9 @@
 <template>
   <div id="demo-card-container">
     <div class="title-container">
-      <div>{{ props.modelName }}</div>
+      <div>{{ settingStore.getModuleName }}</div>
     </div>
     <ResultArea
-      :modelName="props.modelName"
       @wordClicked="
         (v) => {
           if (!recognizing) {
@@ -21,7 +20,7 @@
             if (recognizing) {
               dictate.stopListening().then((url) => (audioURL = url));
             } else {
-              dictate.startListening(props.port);
+              dictate.startListening(settingStore.modulePort);
             }
           }
         "
@@ -43,6 +42,7 @@ import microphoneSVG from "@/assets/svg/microphone.svg";
 import stopSVG from "@/assets/svg/stop.svg";
 import ResultArea from "@/components/home/AsrDemoCard/ResultArea/ResultArea.vue";
 import {useMainResultStore} from "@/store/modules/mainResultStore";
+import {useSettingStore} from "@/store/modules/settingStore";
 
 export default defineComponent({
   name: "AsrDemoCard",
@@ -50,24 +50,14 @@ export default defineComponent({
     AudioPlayer,
     ResultArea,
   },
-  props: {
-    port: {
-      type: Number,
-      required: true,
-    },
-    modelName: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props) {
+  setup() {
     const audioURL = ref<string>();
     const audioPlayer = ref<InstanceType<typeof AudioPlayer>>();
     const dictate = new Dictate();
     const recognizing = computed(() => useMainResultStore().getRecognizing)
-
+    const settingStore = useSettingStore()
     watch(
-        () => props.port,
+        () => settingStore.getModulePort,
         () => {
           dictate.destroy();
           audioURL.value = "";
@@ -81,7 +71,7 @@ export default defineComponent({
       stopSVG,
       audioPlayer,
       recognizing,
-      props,
+      settingStore,
     };
   },
 });

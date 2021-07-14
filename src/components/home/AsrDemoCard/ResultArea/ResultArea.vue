@@ -4,12 +4,10 @@
         v-for="(_, index) in mainResultStore.segments"
         :key="'result-' + index"
         :index="index"
-        :modelName="props.modelName"
         @wordClicked="(v) => emit('wordClicked', v)"
     />
     <ResultSegment
         v-if="mainResultStore.tempText.length > 0"
-        :modelName="props.modelName"
         :text="mainResultStore.tempText"
     />
   </div>
@@ -32,13 +30,7 @@ export default defineComponent({
       return payload.start >= 0 && payload.length >= 0;
     },
   },
-  props: {
-    modelName: {
-      type: String,
-      required: true,
-    },
-  },
-  setup(props, { emit }) {
+  setup(_, {emit}) {
     const resultArea = ref<HTMLDivElement>();
     const mainResultStore = useMainResultStore()
     watch(
@@ -55,7 +47,6 @@ export default defineComponent({
     return {
       resultArea,
       emit,
-      props,
       mainResultStore,
     };
   },

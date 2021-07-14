@@ -29,13 +29,13 @@
           @wordClicked="(v) => emit('wordClicked', v)"
       />
 
-      <!--      <ResultSubSegment-->
-      <!--        v-if="isPosted && postWordAlignment.length > 0"-->
-      <!--        type="p"-->
-      <!--        :index="props.index"-->
-      <!--        :canPlay="true"-->
-      <!--        @wordClicked="(v) => emit('wordClicked', v)"-->
-      <!--      />-->
+      <ResultSubSegment
+          v-if="typeof props.index !== 'undefined' && postWordAlignmentsLength > props.index"
+          :canPlay="true"
+          :index="props.index"
+          type="p"
+          @wordClicked="(v) => emit('wordClicked', v)"
+      />
 
       <!--      <ResultSubSegment-->
       <!--        v-if="isTranslated"-->
@@ -55,6 +55,7 @@ import {WordAlignment} from "@/utils/dictate";
 import {timeFormat} from "@/utils/timeFormat";
 import ResultSubSegment from "@/components/home/AsrDemoCard/ResultArea/ResultSegment/ResultSubSegment.vue";
 import {useMainResultStore} from "@/store/modules/mainResultStore";
+import {usePostResultStore} from "@/store/modules/postResultStore";
 
 export default defineComponent({
   name: "ResultSegment",
@@ -73,10 +74,6 @@ export default defineComponent({
       type: String,
       required: false,
     },
-    modelName: {
-      type: String,
-      required: true,
-    },
   },
   setup(props, {emit}) {
     const mainSegment = computed(() => {
@@ -94,24 +91,13 @@ export default defineComponent({
           return timeFormat(new Date(mainSegment.value.segmentLength))
         }
     );
-    const isPosted = ref(false);
 
-    const postWordAlignment: Ref<WordAlignment[]> = ref([]);
+    const postWordAlignmentsLength = computed(() => usePostResultStore().getWordAlignmentsLength);
+
 
     const isTranslated = ref(false);
     const translateWordAlignment: Ref<WordAlignment[]> = ref([]);
 
-    // watchEffect(async () => {
-    //   if (props.completed) {
-    //     const data: WordAlignment[] = (
-    //       await Axios.post("https://140.109.16.218:8080/recognize", {
-    //         modelName: props.modelName,
-    //         id: props.id,
-    //         start: props.segmentStart.getTime() / 1000,
-    //         length: props.segmentLength / 1000, //second
-    //       })
-    //     ).data;
-    //
     //     postWordAlignment.value = data.map((w) => ({
     //       ...w,
     //       start: Number(w.start),
@@ -151,8 +137,7 @@ export default defineComponent({
       mainSegment,
       startTimeCode,
       lengthCode,
-      isPosted,
-      postWordAlignment,
+      postWordAlignmentsLength,
       isTranslated,
       translateWordAlignment,
     };
