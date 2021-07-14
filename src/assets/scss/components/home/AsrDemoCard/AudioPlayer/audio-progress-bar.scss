@@ -1,6 +1,9 @@
+@use 'sass:math';
+
 $progress-bar-height: 5px;
 .audio-progress-bar-container {
   width: 100%;
+
   .audio-progress-bar {
     z-index: 1;
     height: $progress-bar-height;
@@ -15,7 +18,8 @@ $progress-bar-height: 5px;
       background-color: rgb(60, 145, 255);
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      top: $progress-bar-height/2;
+      top: math.div($progress-bar-height, 2);
+
       .time-code-box {
         font-size: 0.8em;
         padding: 4px;
@@ -25,6 +29,7 @@ $progress-bar-height: 5px;
         left: 7px;
         bottom: 10%;
         position: absolute;
+
         div {
           color: white;
           display: inline-block;

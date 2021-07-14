@@ -1,4 +1,5 @@
-import { expose } from "threads/worker";
+import {expose} from "threads/worker";
+
 let recLength = 0,
   recBuffer: Float32Array[] = [],
   recordSampleRate: number;
@@ -100,11 +101,9 @@ const record = {
     const mergedBuffers = mergeBuffers(recBuffer, recLength);
     const downsampledBuffer = downsampleBuffer(mergedBuffers, exportSampleRate);
     const encodedWav = encodeWAV(downsampledBuffer, exportSampleRate);
-    const audioBlob = new Blob([encodedWav], {
+    return new Blob([encodedWav], {
       type: "audio/wav",
     });
-
-    return audioBlob;
   },
   exportIntervalBuffer() {
     // export 16k raw

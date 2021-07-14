@@ -1,12 +1,8 @@
-import { Candidate } from "@/utils/candidates";
-import { WordAlignment } from "@/utils/dictate";
+import {WordAlignment} from "@/utils/dictate";
 
 export interface Segment {
-  id: string;
-  text: string;
+  id: string
   wordAlignment: WordAlignment[];
   segmentStart: Date;
   segmentLength: number;
-  completed: boolean;
-  candidatesMap: Map<number, Candidate[]>;
 }

@@ -1,32 +1,51 @@
 import Recorder from "@/recorder/recorder";
+import {useMainResultStore} from "@/store/modules/mainResultStore";
+import {Candidate} from "@/utils/candidates";
 
 class Dictate {
   constructor(config?: DictateConfig) {
     this.referenceHandler = config?.referenceHandler ?? this.referenceHandler;
     this.contentType = config?.contentType ?? this.contentType;
     this.interval = config?.interval ?? this.interval;
-    this.onResult = config?.onResult ?? this.onResult;
     this.monitorServerStatus();
     this.init();
   }
 
   private port = 8888;
+
   private get server(): string {
     return `wss://140.109.16.218:${this.port}/client/ws/speech`;
   }
+
   private get serverStatus(): string {
     return `wss://140.109.16.218:${this.port}/client/ws/status`;
   }
-  private referenceHandler =
+
+  private readonly referenceHandler: string =
     "https://140.109.16.218:8888/client/dynamic/reference";
-  private contentType = `content-type=audio/x-raw,+layout=(string)interleaved,+rate=(int)16000,+format=(string)S16LE,+channels=(int)1`;
-  private interval = 100;
+  private readonly contentType: string = `content-type=audio/x-raw,+layout=(string)interleaved,+rate=(int)16000,+format=(string)S16LE,+channels=(int)1`;
+  private readonly interval: number = 100;
   private ws?: WebSocket;
   private wsServerStatus?: WebSocket;
   private recorder?: Recorder;
-  private onResult: (result: WSResponse) => Promise<void> = async () => {
-    return;
-  };
+
+  public async init(): Promise<void> {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+
+      this.recorder = new Recorder(stream, {
+        timeSlice: this.interval,
+        desiredSampRate: 16000,
+        ondataavailable: (data) => {
+          this.ws?.send(data);
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   private monitorServerStatus() {
     if (this.wsServerStatus) {
@@ -48,6 +67,57 @@ class Dictate {
     }
   }
 
+  public async startListening(port: number): Promise<void> {
+    this.port = port;
+
+    if (this.recorder) {
+      await this.recorder.stopRecording();
+    } else {
+      await this.init();
+    }
+
+    if (this.ws) {
+      this.ws.close();
+      this.ws = undefined;
+    }
+
+    try {
+      this.setWebSocket();
+      this.recorder?.startRecording();
+      useMainResultStore().startRecognition()
+
+    } catch (e) {
+      console.log("No web socket support in this browser!");
+    }
+  }
+
+  public async stopListening(): Promise<string> {
+    try {
+      const url = URL.createObjectURL(await this.recorder?.stopRecording());
+
+      this.ws?.send("EOS");
+      useMainResultStore().endRecognition()
+      return url;
+    } catch (e) {
+      console.log("stopListening error: " + e);
+      return "";
+    }
+  }
+
+  private onResult = (res: WSResponse): void => {
+    if (res.result?.final) {
+      useMainResultStore().appendFromDictate(res)
+    } else {
+      useMainResultStore().changeTempText((res.result?.hypotheses[0].transcript ?? "").replace(" ", ""))
+    }
+
+    if (res.adaptation_state) {
+      if (this.recording) {
+        this.stopListening()
+      }
+    }
+  };
+
   private setWebSocket() {
     const url = this.server + "?" + this.contentType;
     this.ws = new WebSocket(url);
@@ -61,7 +131,7 @@ class Dictate {
           if (data.result.hypotheses[0]["word-alignment"]) {
             if (
               data.result.hypotheses[0]["word-alignment"].filter(
-                (w) => data["segment-start"] + w.start! + w.length! > 0.019
+                (w) => data["segment-start"] + w.start + w.length > 0.019
               ).length == 0
             ) {
               return;
@@ -76,61 +146,10 @@ class Dictate {
           }
         }
       } else {
-        this.stopListening();
+        await this.stopListening();
         console.log(`ws error: ${data}`);
       }
     };
-  }
-
-  public async init() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-
-      this.recorder = new Recorder(stream, {
-        timeSlice: this.interval,
-        desiredSampRate: 16000,
-        ondataavailable: (data) => {
-          this.ws?.send(data);
-        },
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  public async startListening(port: number) {
-    this.port = port;
-
-    if (this.recorder) {
-      this.recorder.stopRecording();
-    } else {
-      await this.init();
-    }
-
-    if (this.ws) {
-      this.ws.close();
-      this.ws = undefined;
-    }
-
-    try {
-      this.setWebSocket();
-      this.recorder?.startRecording();
-    } catch (e) {
-      console.log("No web socket support in this browser!");
-    }
-  }
-
-  public async stopListening(): Promise<string> {
-    try {
-      const url = URL.createObjectURL(await this.recorder?.stopRecording());
-
-      this.ws?.send("EOS");
-      return url;
-    } catch (e) {
-      console.log("stopListening error: " + e);
-      return "";
-    }
   }
 
   public destroy(): void {
@@ -157,10 +176,9 @@ interface DictateConfig {
   referenceHandler?: string;
   contentType?: string;
   interval?: number;
-  onResult?: (result: WSResponse) => Promise<void>;
 }
 
-interface WSResponse {
+export interface WSResponse {
   id: string;
   status: number;
   message?: string;
@@ -181,10 +199,11 @@ interface WSResponse {
 }
 
 export interface WordAlignment {
-  start?: number;
-  length?: number;
+  start: number;
+  length: number;
   word: string;
-  confidence?: number;
+  confidence: number;
+  candidates: Candidate[]
   token?: string;
 }
 
@@ -202,26 +221,5 @@ export interface PhoneAlignment {
   start: number; //second
 }
 
-// enum DictateEvent {
-//   MSG_WAITING_MICROPHONE = 1,
-//   MSG_MEDIA_STREAM_CREATED,
-//   MSG_INIT_RECORDER,
-//   MSG_RECORDING,
-//   MSG_SEND,
-//   MSG_SEND_EMPTY,
-//   MSG_SEND_EOS,
-//   MSG_WEB_SOCKET,
-//   MSG_WEB_SOCKET_OPEN,
-//   MSG_WEB_SOCKET_CLOSE,
-//   MSG_STOP,
-//   MSG_SERVER_CHANGED,
-//   MSG_AUDIOCONTEXT_RESUMED,
-// }
-// enum DictateError {
-//   ERR_NETWORK = 2,
-//   ERR_AUDIO,
-//   ERR_SERVER,
-//   ERR_CLIENT,
-// }
 
 export default Dictate;

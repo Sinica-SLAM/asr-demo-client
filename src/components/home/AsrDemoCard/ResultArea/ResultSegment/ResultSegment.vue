@@ -2,109 +2,75 @@
   <div class="result-segment">
     <div class="time-code-container">
       <div
-        class="start-time-code"
-        @click="
+          class="start-time-code"
+          @click="
           (e) => {
             e.preventDefault();
             emit('wordClicked', {
-              start: props.segmentStart.getTime() / 1000,
-              length: props.segmentLength / 1000,
+              start: mainSegment.segmentStart.getTime() / 1000,
+              length: mainSegment.segmentLength / 1000,
             });
           }
         "
       >
         {{ startTimeCode }}
       </div>
-      <div class="length-code" v-if="props.completed">
+      <div v-if="lengthCode" class="length-code">
         {{ "(" + lengthCode + ")" }}
       </div>
     </div>
 
     <div class="sub-segment-container">
       <ResultSubSegment
-        type="r"
-        :text="props.rText"
-        :wordAlignment="props.rWordAlignment"
-        :candidatesMap="props.rCandidatesMap"
-        :segmentStart="props.segmentStart"
-        :canPlay="true"
-        @wordClicked="(v) => emit('wordClicked', v)"
+          :canPlay="true"
+          :index="props.index"
+          :text="props.text"
+          type="r"
+          @wordClicked="(v) => emit('wordClicked', v)"
       />
 
-      <ResultSubSegment
-        v-if="isPosted && postWordAlignment.length > 0"
-        type="p"
-        :wordAlignment="postWordAlignment"
-        :segmentStart="props.segmentStart"
-        :canPlay="true"
-        @wordClicked="(v) => emit('wordClicked', v)"
-      />
+      <!--      <ResultSubSegment-->
+      <!--        v-if="isPosted && postWordAlignment.length > 0"-->
+      <!--        type="p"-->
+      <!--        :index="props.index"-->
+      <!--        :canPlay="true"-->
+      <!--        @wordClicked="(v) => emit('wordClicked', v)"-->
+      <!--      />-->
 
-      <ResultSubSegment
-        v-if="isTranslated"
-        type="t"
-        :wordAlignment="translateWordAlignment"
-        :segment-start="props.segmentStart"
-        :can-play="false"
-      />
+      <!--      <ResultSubSegment-->
+      <!--        v-if="isTranslated"-->
+      <!--        type="t"-->
+      <!--        :index="props.index"-->
+      <!--        :can-play="false"-->
+      <!--      />-->
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  PropType,
-  Ref,
-  ref,
-  watchEffect,
-} from "vue";
-
-import Axios from "axios";
+import {computed, defineComponent, Ref, ref,} from "vue";
 
 import "@/assets/scss/components/home/AsrDemoCard/ResultArea/ResultSegment/result-segment.scss";
-import { WordAlignment } from "@/utils/dictate";
-import { timeFormat } from "@/utils/timeFormat";
-import { Candidate } from "@/utils/candidates";
+import {WordAlignment} from "@/utils/dictate";
+import {timeFormat} from "@/utils/timeFormat";
 import ResultSubSegment from "@/components/home/AsrDemoCard/ResultArea/ResultSegment/ResultSubSegment.vue";
-import axios from "axios";
+import {useMainResultStore} from "@/store/modules/mainResultStore";
 
 export default defineComponent({
-  name: "AsrDemoSegment",
-  components: { ResultSubSegment },
+  name: "ResultSegment",
+  components: {ResultSubSegment},
   emits: {
     wordClicked(payload: { start: number; length: number }) {
       return payload.start >= 0 && payload.length >= 0;
     },
   },
   props: {
-    id: {
-      type: String,
-      required: true,
-    },
-    rText: {
-      type: String,
-      required: false,
-    },
-    completed: {
-      type: Boolean,
-      required: true,
-    },
-    rWordAlignment: {
-      type: Array as PropType<Array<WordAlignment>>,
-      required: false,
-    },
-    segmentStart: {
-      type: Date as PropType<Date>,
-      required: true,
-    },
-    segmentLength: {
+    index: {
       type: Number,
-      required: true,
+      required: false,
     },
-    rCandidatesMap: {
-      type: Map as PropType<Map<number, Candidate[]>>,
+    text: {
+      type: String,
       required: false,
     },
     modelName: {
@@ -112,10 +78,21 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, { emit }) {
-    const startTimeCode = computed(() => timeFormat(props.segmentStart));
-    const lengthCode = computed(() =>
-      timeFormat(new Date(props.segmentLength))
+  setup(props, {emit}) {
+    const mainSegment = computed(() => {
+      const mainResultStore = useMainResultStore();
+      if (typeof props.index === "undefined") {
+        return {segmentStart: new Date(mainResultStore.getCurrentTimeCode), segmentLength: 0}
+      }
+      return mainResultStore.getSegments[props.index]
+    })
+    const startTimeCode = computed(() => timeFormat(mainSegment.value.segmentStart));
+    const lengthCode = computed(() => {
+          if (!mainSegment.value.segmentLength) {
+            return ""
+          }
+          return timeFormat(new Date(mainSegment.value.segmentLength))
+        }
     );
     const isPosted = ref(false);
 
@@ -124,58 +101,58 @@ export default defineComponent({
     const isTranslated = ref(false);
     const translateWordAlignment: Ref<WordAlignment[]> = ref([]);
 
-    watchEffect(async () => {
-      if (props.completed) {
-        const data: WordAlignment[] = (
-          await Axios.post("https://140.109.16.218:8080/recognize", {
-            modelName: props.modelName,
-            id: props.id,
-            start: props.segmentStart.getTime() / 1000,
-            length: props.segmentLength / 1000, //second
-          })
-        ).data;
-
-        postWordAlignment.value = data.map((w) => ({
-          ...w,
-          start: Number(w.start),
-          length: Number(w.length),
-        }));
-
-        isPosted.value = true;
-      }
-    });
-
-    watchEffect(async () => {
-      if (isPosted.value && postWordAlignment.value.length > 0) {
-        const src = props.modelName.split("E")[0];
-        const trg = src === "mandarin" ? "taigi" : "mandarin";
-        const text = postWordAlignment.value
-          .map((word) => word.word.replace(/<|>/, ""))
-          .join(" ");
-
-        const translatedText = (
-          await axios.post("https://140.109.16.218:8080/translate", {
-            src,
-            trg,
-            text,
-          })
-        ).data.result as string;
-
-        translateWordAlignment.value = translatedText.split(" ").map((s) => ({
-          word: s,
-        }));
-
-        isTranslated.value = true;
-      }
-    });
+    // watchEffect(async () => {
+    //   if (props.completed) {
+    //     const data: WordAlignment[] = (
+    //       await Axios.post("https://140.109.16.218:8080/recognize", {
+    //         modelName: props.modelName,
+    //         id: props.id,
+    //         start: props.segmentStart.getTime() / 1000,
+    //         length: props.segmentLength / 1000, //second
+    //       })
+    //     ).data;
+    //
+    //     postWordAlignment.value = data.map((w) => ({
+    //       ...w,
+    //       start: Number(w.start),
+    //       length: Number(w.length),
+    //     }));
+    //
+    //     isPosted.value = true;
+    //   }
+    // });
+    //
+    // watchEffect(async () => {
+    //   if (isPosted.value && postWordAlignment.value.length > 0) {
+    //     const src = props.modelName.split("E")[0];
+    //     const trg = src === "mandarin" ? "taigi" : "mandarin";
+    //     const text = postWordAlignment.value
+    //       .map((word) => word.word.replace(/[<>]/, ""))
+    //       .join(" ");
+    //
+    //     const translatedText = (
+    //       await axios.post("https://140.109.16.218:8080/translate", {
+    //         src,
+    //         trg,
+    //         text,
+    //       })
+    //     ).data.result as string;
+    //
+    //     translateWordAlignment.value = translatedText.split(" ").map((s) => ({
+    //       word: s,
+    //     }));
+    //
+    //     isTranslated.value = true;
+    //   }
+    // });
     return {
       props,
       emit,
+      mainSegment,
       startTimeCode,
       lengthCode,
       isPosted,
       postWordAlignment,
-
       isTranslated,
       translateWordAlignment,
     };

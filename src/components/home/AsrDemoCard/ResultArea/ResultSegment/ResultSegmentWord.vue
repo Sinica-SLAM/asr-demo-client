@@ -1,36 +1,37 @@
 <template>
   <span
-    class="word-container underline"
-    @click="
+      class="word-container underline"
+      @click="
       (e) => {
         e.preventDefault();
         emit('click', {
-          start: props.start,
+          start: props.alignment.start,
           length: props.word.length,
         });
       }
     "
-    @mouseover="() => (hover = true)"
-    @mouseout="() => (hover = false)"
+      @mouseout="() => (hover = false)"
+      @mouseover="() =>(hover = true)"
   >
     <ruby
-      v-for="(char, charIndex) in props.word.word"
-      :key="props.start + char"
+        v-for="(char, charIndex) in props.alignment.word"
+        :key="props.alignment.start + char"
     >
       {{ char }}
       <rp>(</rp>
-      <rt>{{ props.tokens ? props.tokens[charIndex] : "" }}</rt>
+      <rt>{{ tokens.length > charIndex ? tokens[charIndex] : undefined }}</rt>
       <rp>)</rp>
     </ruby>
     <WordCandidates
-      v-if="hover && props.candidates"
-      :candidates="props.candidates"
+        v-if="hover && props.alignment.candidates"
+        :candidates="props.alignment.candidates"
     />
   </span>
 </template>
 <script lang="ts">
-import { WordAlignment } from "@/utils/dictate";
-import { defineComponent, PropType, ref } from "vue";
+
+import {WordAlignment} from "@/utils/dictate";
+import {computed, defineComponent, PropType, ref} from "vue";
 import "@/assets/scss/components/home/AsrDemoCard/ResultArea/ResultSegment/result-segment-word.scss";
 import WordCandidates from "./WordCandidates.vue";
 
@@ -45,27 +46,15 @@ export default defineComponent({
     },
   },
   props: {
-    start: {
-      type: Number, // second
-      required: true,
-    },
-    word: {
+    alignment: {
       type: Object as PropType<WordAlignment>,
       required: true,
     },
-    tokens: {
-      type: Array as PropType<Array<string>>,
-      required: false,
-    },
-    candidates: {
-      type: Array as PropType<Array<string>>,
-      required: false,
-    },
   },
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     const hover = ref(false);
-
-    return { props, emit, hover };
+    const tokens = computed(() => (props.alignment.token ?? "").split("-"))
+    return {props, emit, hover, tokens};
   },
 });
 </script>
