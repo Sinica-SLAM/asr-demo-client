@@ -5,8 +5,8 @@
       (e) => {
         e.preventDefault();
         emit('click', {
-          start: props.alignment.start,
-          length: props.word.length,
+          start: props.alignment.start*1000,
+          length: props.alignment.length*1000,
         });
       }
     "

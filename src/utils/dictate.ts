@@ -1,6 +1,7 @@
 import Recorder from "@/recorder/recorder";
 import {useMainResultStore} from "@/store/modules/mainResultStore";
 import {Candidate} from "@/utils/candidates";
+import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
 
 class Dictate {
   constructor(config?: DictateConfig) {
@@ -91,16 +92,15 @@ class Dictate {
     }
   }
 
-  public async stopListening(): Promise<string> {
+  public async stopListening(): Promise<void> {
     try {
       const url = URL.createObjectURL(await this.recorder?.stopRecording());
+      useAudioPlayerStore().setAudioURL(url)
 
       this.ws?.send("EOS");
       useMainResultStore().endRecognition()
-      return url;
     } catch (e) {
       console.log("stopListening error: " + e);
-      return "";
     }
   }
 
@@ -108,7 +108,7 @@ class Dictate {
     if (res.result?.final) {
       useMainResultStore().appendFromDictate(res)
     } else {
-      useMainResultStore().changeTempText((res.result?.hypotheses[0].transcript ?? "").replace(" ", ""))
+      useMainResultStore().setTempText((res.result?.hypotheses[0].transcript ?? "").replace(" ", ""))
     }
 
     if (res.adaptation_state) {

@@ -1,20 +1,6 @@
 <template>
   <div id="home" class="page-container">
     <div id="select-container">
-      <!-- <select v-model="asrType.language">
-        <option
-          v-for="language in defaultOption.languages"
-          :key="language.name"
-          :value="language.name"
-        >
-          {{ language.name }}
-        </option>
-      </select> -->
-      <!-- <select v-model="asrType.port">
-        <option v-for="model in models" :key="model.name" :value="model.port">
-          {{ model.name }}
-        </option>
-      </select> -->
       <select v-model="settingStore.modulePort">
         <option
             v-for="model in defaultOption.models"
@@ -45,20 +31,6 @@ export default defineComponent({
     AsrDemoCard,
   },
   setup() {
-    //data from backend
-    // const defaultOption = {
-    //   languages: [
-    //     {
-    //       name: "chinese",
-    //       models: [
-    //         {
-    //           name: "mandarinE",
-    //           port: 8888,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // };
     const defaultOption = {
       models: [
         // {

@@ -41,15 +41,15 @@ export const useMainResultStore = defineStore({
           ...alignment,
           candidates: candidatesMap.get(alignment.start) ?? []
         })),
-        segmentStart: new Date(this.currentTimeCode),
+        segmentStart: new Date(res["segment-start"] * 1000),
         segmentLength: res["segment-length"] * 1000,
 
       })
       usePostResultStore().appendFromAPI(res.id, this.currentTimeCode, res["segment-length"] * 1000)
-      this.currentTimeCode += res["segment-length"] * 1000
+      this.currentTimeCode = (res["segment-start"] + res["segment-length"]) * 1000
       this.tempText = ""
     },
-    changeTempText(text: string) {
+    setTempText(text: string) {
       this.tempText = text
     },
     startRecognition() {

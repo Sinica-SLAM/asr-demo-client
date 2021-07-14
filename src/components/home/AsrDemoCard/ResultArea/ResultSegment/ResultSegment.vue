@@ -6,10 +6,7 @@
           @click="
           (e) => {
             e.preventDefault();
-            emit('wordClicked', {
-              start: mainSegment.segmentStart.getTime() / 1000,
-              length: mainSegment.segmentLength / 1000,
-            });
+            audioPlayerStore.playWithLength(mainSegment.segmentStart.getTime(),mainSegment.segmentLength)
           }
         "
       >
@@ -26,7 +23,7 @@
           :index="props.index"
           :text="props.text"
           type="r"
-          @wordClicked="(v) => emit('wordClicked', v)"
+          @wordClicked="(wordTime) => audioPlayerStore.playWithLength(wordTime.start+mainSegment.segmentStart.getTime(),wordTime.length)"
       />
 
       <ResultSubSegment
@@ -34,7 +31,7 @@
           :canPlay="true"
           :index="props.index"
           type="p"
-          @wordClicked="(v) => emit('wordClicked', v)"
+          @wordClicked="(wordTime) => audioPlayerStore.playWithLength(wordTime.start+mainSegment.segmentStart.getTime(),wordTime.length)"
       />
 
       <!--      <ResultSubSegment-->
@@ -56,15 +53,11 @@ import {timeFormat} from "@/utils/timeFormat";
 import ResultSubSegment from "@/components/home/AsrDemoCard/ResultArea/ResultSegment/ResultSubSegment.vue";
 import {useMainResultStore} from "@/store/modules/mainResultStore";
 import {usePostResultStore} from "@/store/modules/postResultStore";
+import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
 
 export default defineComponent({
   name: "ResultSegment",
   components: {ResultSubSegment},
-  emits: {
-    wordClicked(payload: { start: number; length: number }) {
-      return payload.start >= 0 && payload.length >= 0;
-    },
-  },
   props: {
     index: {
       type: Number,
@@ -75,7 +68,8 @@ export default defineComponent({
       required: false,
     },
   },
-  setup(props, {emit}) {
+  setup(props) {
+    const audioPlayerStore = useAudioPlayerStore()
     const mainSegment = computed(() => {
       const mainResultStore = useMainResultStore();
       if (typeof props.index === "undefined") {
@@ -85,7 +79,7 @@ export default defineComponent({
     })
     const startTimeCode = computed(() => timeFormat(mainSegment.value.segmentStart));
     const lengthCode = computed(() => {
-          if (!mainSegment.value.segmentLength) {
+      if (!mainSegment.value.segmentLength) {
             return ""
           }
           return timeFormat(new Date(mainSegment.value.segmentLength))
@@ -98,16 +92,6 @@ export default defineComponent({
     const isTranslated = ref(false);
     const translateWordAlignment: Ref<WordAlignment[]> = ref([]);
 
-    //     postWordAlignment.value = data.map((w) => ({
-    //       ...w,
-    //       start: Number(w.start),
-    //       length: Number(w.length),
-    //     }));
-    //
-    //     isPosted.value = true;
-    //   }
-    // });
-    //
     // watchEffect(async () => {
     //   if (isPosted.value && postWordAlignment.value.length > 0) {
     //     const src = props.modelName.split("E")[0];
@@ -133,7 +117,7 @@ export default defineComponent({
     // });
     return {
       props,
-      emit,
+      audioPlayerStore,
       mainSegment,
       startTimeCode,
       lengthCode,

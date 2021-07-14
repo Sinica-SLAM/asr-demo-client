@@ -14,7 +14,10 @@
           v-for="(alignment, i) in wordAlignment ?? []"
           :key="alignment.word + i + props.type"
           :alignment="alignment"
-          @click="canPlay ? (v) => emit('wordClicked', v) : () => {}"
+          @click="(v) => {
+            if(props.canPlay){
+              emit('wordClicked', v)
+            }}"
       />
     </div>
   </div>
@@ -68,7 +71,7 @@ export default defineComponent({
           return useMainResultStore().segments[props.index].wordAlignment
       }
     })
-    return {props, emit, wordAlignment};
+    return {props, emit, wordAlignment, log: console.log};
   },
 });
 </script>

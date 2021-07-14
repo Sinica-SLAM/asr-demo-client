@@ -3,22 +3,14 @@
     <div class="title-container">
       <div>{{ settingStore.getModuleName }}</div>
     </div>
-    <ResultArea
-      @wordClicked="
-        (v) => {
-          if (!recognizing) {
-            audioPlayer.playWithLength(v.start, v.length);
-          }
-        }
-      "
-    />
+    <ResultArea/>
     <div class="controller-container" v-if="!audioURL">
       <div
           class="svg-container"
           @click="
           () => {
             if (recognizing) {
-              dictate.stopListening().then((url) => (audioURL = url));
+              dictate.stopListening()
             } else {
               dictate.startListening(settingStore.modulePort);
             }
@@ -29,12 +21,12 @@
         <img v-else :src="stopSVG" alt="stop" height="44" width="44"/>
       </div>
     </div>
-    <AudioPlayer v-else :audioURL="audioURL" ref="audioPlayer" />
+    <AudioPlayer v-else ref="audioPlayer" :audioURL="audioURL"/>
   </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, ref, watch} from "vue";
+import {computed, defineComponent, watch} from "vue";
 import "@/assets/scss/components/home/AsrDemoCard/asr-demo-card.scss";
 import Dictate from "@/utils/dictate";
 import AudioPlayer from "./AudioPlayer/AudioPlayer.vue";
@@ -43,6 +35,7 @@ import stopSVG from "@/assets/svg/stop.svg";
 import ResultArea from "@/components/home/AsrDemoCard/ResultArea/ResultArea.vue";
 import {useMainResultStore} from "@/store/modules/mainResultStore";
 import {useSettingStore} from "@/store/modules/settingStore";
+import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
 
 export default defineComponent({
   name: "AsrDemoCard",
@@ -51,8 +44,7 @@ export default defineComponent({
     ResultArea,
   },
   setup() {
-    const audioURL = ref<string>();
-    const audioPlayer = ref<InstanceType<typeof AudioPlayer>>();
+    const audioURL = computed(() => useAudioPlayerStore().audioURL)
     const dictate = new Dictate();
     const recognizing = computed(() => useMainResultStore().getRecognizing)
     const settingStore = useSettingStore()
@@ -60,7 +52,7 @@ export default defineComponent({
         () => settingStore.getModulePort,
         () => {
           dictate.destroy();
-          audioURL.value = "";
+          useAudioPlayerStore().setAudioURL("")
         }
     );
 
@@ -69,7 +61,6 @@ export default defineComponent({
       audioURL,
       microphoneSVG,
       stopSVG,
-      audioPlayer,
       recognizing,
       settingStore,
     };

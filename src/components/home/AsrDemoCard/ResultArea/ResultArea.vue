@@ -4,7 +4,6 @@
         v-for="(_, index) in mainResultStore.segments"
         :key="'result-' + index"
         :index="index"
-        @wordClicked="(v) => emit('wordClicked', v)"
     />
     <ResultSegment
         v-if="mainResultStore.tempText.length > 0"
@@ -25,12 +24,7 @@ import ResultSegment from "@/components/home/AsrDemoCard/ResultArea/ResultSegmen
 
 export default defineComponent({
   components: {ResultSegment},
-  emits: {
-    wordClicked(payload: { start: number; length: number }) {
-      return payload.start >= 0 && payload.length >= 0;
-    },
-  },
-  setup(_, {emit}) {
+  setup() {
     const resultArea = ref<HTMLDivElement>();
     const mainResultStore = useMainResultStore()
     watch(
@@ -46,7 +40,6 @@ export default defineComponent({
     );
     return {
       resultArea,
-      emit,
       mainResultStore,
     };
   },
