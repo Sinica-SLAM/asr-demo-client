@@ -85,7 +85,6 @@ class Dictate {
     try {
       this.setWebSocket();
       this.recorder?.startRecording();
-      useMainResultStore().startRecognition()
 
     } catch (e) {
       console.log("No web socket support in this browser!");
@@ -98,7 +97,6 @@ class Dictate {
       useAudioPlayerStore().setAudioURL(url)
 
       this.ws?.send("EOS");
-      useMainResultStore().endRecognition()
     } catch (e) {
       console.log("stopListening error: " + e);
     }
@@ -113,7 +111,7 @@ class Dictate {
 
     if (res.adaptation_state) {
       if (this.recording) {
-        this.stopListening()
+        useMainResultStore().endReadTimeRecognition();
       }
     }
   };
@@ -146,7 +144,7 @@ class Dictate {
           }
         }
       } else {
-        await this.stopListening();
+        await useMainResultStore().endReadTimeRecognition();
         console.log(`ws error: ${data}`);
       }
     };

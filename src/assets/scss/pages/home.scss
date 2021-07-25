@@ -2,14 +2,34 @@
 
 @include page("home") {
   height: 100vh;
-  #select-container {
+  margin: 0 auto;
+  max-width: 1040px;
+  min-width: 256px;
+  #controller-container {
+    max-width: 250px;
     display: flex;
-    max-width: 30%;
-    justify-content: center;
-    padding: 10px 0px;
-    margin: auto;
+    justify-content: space-between;
+    padding: 10px 0;
+
     select {
       font-size: 1rem;
+      margin: auto 0;
+    }
+
+    button {
+      border: none;
+      background-color: dodgerblue;
+      color: white;
+      border-radius: 5px;
+      padding: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+
+      &:disabled {
+        background-color: #4ea7ff;
+        cursor: auto;
+      }
     }
   }
 }

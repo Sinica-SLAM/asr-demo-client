@@ -1,0 +1,36 @@
+@import "../../shared/card";
+
+.dialog-box {
+  .content-container {
+    @include card();
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    padding: 20px;
+    flex-grow: 1;
+    z-index: 3;
+    background-color: white;
+
+    &.display {
+      display: flex;
+    }
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0.46;
+    background-color: rgb(33, 33, 33);
+    z-index: 2;
+    display: none;
+
+    &.display {
+      display: flex;
+    }
+  }
+}

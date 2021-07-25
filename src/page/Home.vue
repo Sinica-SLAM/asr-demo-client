@@ -1,6 +1,6 @@
 <template>
   <div id="home" class="page-container">
-    <div id="select-container">
+    <div id="controller-container">
       <select v-model="settingStore.modulePort">
         <option
             v-for="model in defaultOption.models"
@@ -10,6 +10,10 @@
           {{ model.name }}
         </option>
       </select>
+      <StartASRDialog/>
+      <button disabled>
+        History
+      </button>
     </div>
 
     <AsrDemoCard/>
@@ -24,10 +28,12 @@ import rightArrowSvg from "@/assets/svg/right-arrow.svg";
 
 import "@/assets/scss/pages/home.scss";
 import {useSettingStore} from "@/store/modules/settingStore";
+import StartASRDialog from "@/components/home/StartASRDialog";
 
 export default defineComponent({
   name: "Home",
   components: {
+    StartASRDialog,
     AsrDemoCard,
   },
   setup() {

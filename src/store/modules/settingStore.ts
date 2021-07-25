@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 
 interface settingState {
-  modulePort: number
+  modulePort: number,
 }
 
 export const useSettingStore = defineStore({

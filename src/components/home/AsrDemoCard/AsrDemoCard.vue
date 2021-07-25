@@ -4,31 +4,23 @@
       <div>{{ settingStore.getModuleName }}</div>
     </div>
     <ResultArea/>
-    <div class="controller-container" v-if="!audioURL">
+    <div v-if="type === 'realtime' && recognizing" class="controller-container">
       <div
           class="svg-container"
           @click="
-          () => {
-            if (recognizing) {
-              dictate.stopListening()
-            } else {
-              dictate.startListening(settingStore.modulePort);
-            }
-          }
+          () => mainResultStore.endReadTimeRecognition()
         "
       >
-        <img v-if="!recognizing" :src="microphoneSVG" alt="record" height="64" width="64"/>
-        <img v-else :src="stopSVG" alt="stop" height="44" width="44"/>
+        <img :src="stopSVG" alt="stop" height="44" width="44"/>
       </div>
     </div>
-    <AudioPlayer v-else ref="audioPlayer" :audioURL="audioURL"/>
+    <AudioPlayer v-if="audioURL" ref="audioPlayer" :audioURL="audioURL"/>
   </div>
 </template>
 
 <script lang="ts">
 import {computed, defineComponent, watch} from "vue";
 import "@/assets/scss/components/home/AsrDemoCard/asr-demo-card.scss";
-import Dictate from "@/utils/dictate";
 import AudioPlayer from "./AudioPlayer/AudioPlayer.vue";
 import microphoneSVG from "@/assets/svg/microphone.svg";
 import stopSVG from "@/assets/svg/stop.svg";
@@ -44,25 +36,28 @@ export default defineComponent({
     ResultArea,
   },
   setup() {
-    const audioURL = computed(() => useAudioPlayerStore().audioURL)
-    const dictate = new Dictate();
-    const recognizing = computed(() => useMainResultStore().getRecognizing)
+    const audioPlayerStore = useAudioPlayerStore()
+    const mainResultStore = useMainResultStore()
     const settingStore = useSettingStore()
+    const audioURL = computed(() => audioPlayerStore.audioURL)
+    const type = computed(() => mainResultStore.getType)
+    const recognizing = computed(() => mainResultStore.getRecognizing)
     watch(
         () => settingStore.getModulePort,
         () => {
-          dictate.destroy();
-          useAudioPlayerStore().setAudioURL("")
+          mainResultStore.dictate.destroy();
+          audioPlayerStore.setAudioURL("")
         }
     );
 
     return {
-      dictate,
+      type,
       audioURL,
       microphoneSVG,
       stopSVG,
       recognizing,
       settingStore,
+      mainResultStore,
     };
   },
 });

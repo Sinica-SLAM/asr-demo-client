@@ -1,16 +1,18 @@
+@import "../../../shared/card";
+
 #demo-card-container {
-  box-shadow: 0 0 15px 0 rgba(217, 217, 217, 0.66);
-  max-width: 1040px;
+  @include card();
   height: 85%;
   padding: 54px 100px 10px 100px;
-  margin: 30px auto 0px auto;
-  border-radius: 10px;
+  margin: 10px auto 0 auto;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+
   .controller-container {
     display: flex;
     justify-content: center;
+
     .svg-container {
       display: flex;
       justify-content: center;

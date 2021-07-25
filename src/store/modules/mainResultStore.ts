@@ -1,14 +1,18 @@
 import {Segment} from "@/components/home/AsrDemoCard/asrDemoCard";
 import {defineStore} from "pinia";
-import {WSResponse} from "@/utils/dictate";
 import {getCandidates} from "@/utils/candidates";
+import Dictate, {WSResponse} from "@/utils/dictate";
 import {usePostResultStore} from "@/store/modules/postResultStore";
+import {useSettingStore} from "@/store/modules/settingStore";
+import axios from "axios";
 
 interface mainResultState {
   tempText: string,
   segments: Segment[],
   currentTimeCode: number,
-  recognizing: boolean
+  recognizing: boolean,
+  type: "realtime" | "upload" | undefined,
+  dictate: Dictate
 }
 
 export const useMainResultStore = defineStore({
@@ -18,12 +22,15 @@ export const useMainResultStore = defineStore({
     segments: [],
     currentTimeCode: 0,
     recognizing: false,
+    type: undefined,
+    dictate: new Dictate()
   }),
   getters: {
     getTempText: (state): string => state.tempText,
     getSegments: (state): Segment[] => state.segments,
     getCurrentTimeCode: (state): number => state.currentTimeCode,
     getRecognizing: (state): boolean => state.recognizing,
+    getType: (state): "realtime" | "upload" | undefined => state.type
   },
   actions: {
     appendFromDictate(res: WSResponse) {
@@ -52,12 +59,25 @@ export const useMainResultStore = defineStore({
     setTempText(text: string) {
       this.tempText = text
     },
-    startRecognition() {
-      this.recognizing = true
+    setType(type: "realtime" | "upload") {
+      this.type = type
     },
-    endRecognition() {
+    startReadTimeRecognition() {
+      this.recognizing = true
+      this.type = "realtime"
+      this.dictate.startListening(useSettingStore().getModulePort)
+    },
+    endReadTimeRecognition() {
       this.recognizing = false
-    }
+      this.dictate.stopListening()
+    },
+    async startUploadRecognition(file: File) {
+      const formData = new FormData()
+      this.recognizing = true
+      this.type = "upload"
+      formData.append("file", file)
+      const response = await axios.post("/api/?", formData, {headers: {"Content-Type": "multipart/form-data"}})
+      console.log(response)
+    },
   }
 })
-
