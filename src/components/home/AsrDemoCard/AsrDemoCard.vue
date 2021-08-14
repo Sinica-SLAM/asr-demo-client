@@ -14,6 +14,7 @@
         <img :src="stopSVG" alt="stop" height="44" width="44"/>
       </div>
     </div>
+    <LoadingCircle v-if="type === 'upload' && recognizing"/>
     <AudioPlayer v-if="audioURL" ref="audioPlayer" :audioURL="audioURL"/>
   </div>
 </template>
@@ -28,10 +29,12 @@ import ResultArea from "@/components/home/AsrDemoCard/ResultArea/ResultArea.vue"
 import {useMainResultStore} from "@/store/modules/mainResultStore";
 import {useSettingStore} from "@/store/modules/settingStore";
 import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
+import LoadingCircle from "@/components/shared/LoadingCircle.vue";
 
 export default defineComponent({
   name: "AsrDemoCard",
   components: {
+    LoadingCircle,
     AudioPlayer,
     ResultArea,
   },

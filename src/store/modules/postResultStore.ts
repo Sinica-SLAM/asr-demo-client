@@ -22,7 +22,8 @@ export const usePostResultStore = defineStore({
     async appendFromAPI(id: string, start: number, length: number) {
       const settingStore = useSettingStore();
       const data: WordAlignment[] = (await axios.post("https://140.109.16.218:8080/recognize", {
-          modelName: settingStore.getModuleName,
+          langKind: settingStore.langKind,
+          asrKind: settingStore.getAsrKind,
           id,
           start: start / 1000,
           length: length / 1000, //second

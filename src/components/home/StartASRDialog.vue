@@ -25,7 +25,7 @@
           <button @click="()=>fileInput?.click()">
             上傳音檔
           </button>
-          <input ref="fileInput" accept="audio/wav" type="file" @change="(e)=>{
+          <input ref="fileInput" accept="audio/wav,audio/mpeg3,audio/mp4,video/mp4" type="file" @change="(e)=>{
           mainResultStore.setType('upload')
           mainResultStore.startUploadRecognition( e.target.files[0])
           inactive()

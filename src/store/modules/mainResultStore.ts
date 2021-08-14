@@ -5,6 +5,7 @@ import Dictate, {WSResponse} from "@/utils/dictate";
 import {usePostResultStore} from "@/store/modules/postResultStore";
 import {useSettingStore} from "@/store/modules/settingStore";
 import axios from "axios";
+import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
 
 interface mainResultState {
   tempText: string,
@@ -76,8 +77,17 @@ export const useMainResultStore = defineStore({
       this.recognizing = true
       this.type = "upload"
       formData.append("file", file)
-      const response = await axios.post("/api/?", formData, {headers: {"Content-Type": "multipart/form-data"}})
-      console.log(response)
+      formData.append("asrKind", useSettingStore().getAsrKind)
+      formData.append("langKind", useSettingStore().getLangKind)
+      const response = await axios.post("https://140.109.16.218:8080/uploadRecognize", formData, {headers: {"Content-Type": "multipart/form-data"}})
+      this.segments.push({
+        id: String(new Date().getTime()),
+        wordAlignment: response.data,
+        segmentStart: new Date(0),
+        segmentLength: response.data[response.data.length - 1].start * 1000 + response.data[response.data.length - 1].length * 1000
+      })
+      useAudioPlayerStore().setAudioURL(URL.createObjectURL(file))
+      this.recognizing = false
     },
   }
 })

@@ -1,16 +1,25 @@
 <template>
   <div id="home" class="page-container">
     <div id="controller-container">
-      <select v-model="settingStore.modulePort">
+      <select v-model="settingStore.langKind">
         <option
-            v-for="model in defaultOption.models"
-            :key="model.port"
-            :value="model.port"
+            v-for="lang in ['Mandarin', 'Taigi']"
+            :key="lang"
+            :value="lang"
+        >
+          {{ lang }}
+        </option>
+      </select>
+      <select v-model="settingStore.asrKind">
+        <option
+            v-for="model in defaultOption.models.filter((m)=>(m.langKind === settingStore.langKind))"
+            :key="model.name"
+            :value="model.name"
         >
           {{ model.name }}
         </option>
       </select>
-      <StartASRDialog/>
+      <StartASRDialog :disabled="mainResultStore.getRecognizing"/>
       <button disabled>
         History
       </button>
@@ -29,6 +38,7 @@ import rightArrowSvg from "@/assets/svg/right-arrow.svg";
 import "@/assets/scss/pages/home.scss";
 import {useSettingStore} from "@/store/modules/settingStore";
 import StartASRDialog from "@/components/home/StartASRDialog";
+import {useMainResultStore} from "@/store/modules/mainResultStore";
 
 export default defineComponent({
   name: "Home",
@@ -39,20 +49,15 @@ export default defineComponent({
   setup() {
     const defaultOption = {
       models: [
-        // {
-        //   name: "mandarinE_16k",
-        //   port: 8888,
-        // },
-        // {
-        //   name: "taigiE_fsr",
-        //   port: 8889,
-        // },
-        {name: "tailo_0630", port: 8890},
+        {
+          langKind: "Mandarin", name: "formospeech_me_1"
+        },
       ],
     };
     const settingStore = useSettingStore()
+    const mainResultStore = useMainResultStore()
 
-    return {defaultOption, settingStore, leftArrowSvg, rightArrowSvg};
+    return {defaultOption, settingStore, leftArrowSvg, rightArrowSvg, mainResultStore};
   },
 });
 </script>

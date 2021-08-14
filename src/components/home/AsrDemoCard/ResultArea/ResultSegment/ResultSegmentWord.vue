@@ -53,7 +53,7 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const hover = ref(false);
-    const tokens = computed(() => (props.alignment.token ?? "").split("-"))
+    const tokens = computed(() => (props.alignment.token ?? "").split(" "))
     return {props, emit, hover, tokens};
   },
 });

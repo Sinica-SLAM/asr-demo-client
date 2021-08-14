@@ -123,9 +123,9 @@ class Dictate {
       const data: WSResponse = JSON.parse(e.data);
       if (data.status === 0) {
         if (data.result) {
-          if (data.segment == 0) {
-            return;
-          }
+          // if (data.segment == 0) {
+          //   return;
+          // }
           if (data.result.hypotheses[0]["word-alignment"]) {
             if (
               data.result.hypotheses[0]["word-alignment"].filter(
