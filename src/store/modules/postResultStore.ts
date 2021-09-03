@@ -23,7 +23,7 @@ export const usePostResultStore = defineStore({
       this.wordAlignments.push(undefined);
       const index = this.wordAlignments.length - 1;
       const settingStore = useSettingStore();
-      const data: WordAlignment[] = (await axios.post("https://140.109.16.218:8080/api/recognize", {
+      const data: WordAlignment[] = (await axios.post("https://140.109.16.218:8080/api/postRecognize", {
           langKind: settingStore.langKind,
           asrKind: settingStore.getAsrKind,
           id,
