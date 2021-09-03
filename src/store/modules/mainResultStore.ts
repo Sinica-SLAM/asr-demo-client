@@ -79,7 +79,7 @@ export const useMainResultStore = defineStore({
       formData.append("file", file)
       formData.append("asrKind", useSettingStore().getAsrKind)
       formData.append("langKind", useSettingStore().getLangKind)
-      const response = await axios.post("https://140.109.16.218:8080/uploadRecognize", formData, {headers: {"Content-Type": "multipart/form-data"}})
+      const response = await axios.post("https://140.109.16.218:8080/api/uploadRecognize", formData, {headers: {"Content-Type": "multipart/form-data"}})
       this.segments.push({
         id: String(new Date().getTime()),
         wordAlignment: response.data,

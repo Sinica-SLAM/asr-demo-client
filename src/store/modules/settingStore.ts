@@ -2,7 +2,7 @@ import {defineStore} from "pinia";
 
 interface settingState {
   asrKind: string,
-  langKind: "Mandarin" | "Taigi"
+  langKind: "Mandarin" | "Taibun" | "Tailo"
 }
 
 export const useSettingStore = defineStore({
@@ -16,6 +16,10 @@ export const useSettingStore = defineStore({
       switch (state.asrKind) {
         case "formospeech_me_1":
           return 8888
+        case "tailo_0630":
+          return 8889
+        case "tailo_0630_taibun":
+          return 8890
         default:
           return 8888
       }

@@ -3,7 +3,7 @@
     <div id="controller-container">
       <select v-model="settingStore.langKind">
         <option
-            v-for="lang in ['Mandarin', 'Taigi']"
+            v-for="lang in ['Mandarin', 'Taibun', 'Tailo']"
             :key="lang"
             :value="lang"
         >
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import {defineComponent, watch} from "vue";
 import AsrDemoCard from "@/components/home/AsrDemoCard/AsrDemoCard.vue";
 import leftArrowSvg from "@/assets/svg/left-arrow.svg";
 import rightArrowSvg from "@/assets/svg/right-arrow.svg";
@@ -50,12 +50,32 @@ export default defineComponent({
     const defaultOption = {
       models: [
         {
-          langKind: "Mandarin", name: "formospeech_me_1"
+          langKind: "Mandarin", name: "formospeech_me_1",
         },
+        {
+          langKind: "Tailo", name: "tailo_0630"
+        },
+        {
+          langKind: "Taibun", name: "tailo_0630_taibun"
+        }
       ],
     };
     const settingStore = useSettingStore()
     const mainResultStore = useMainResultStore()
+    watch(() => settingStore.getLangKind, (langKind, prevLangKind) => {
+      if (langKind === prevLangKind) {
+        return
+      }
+
+      const langModels = defaultOption.models.filter((model) => model.langKind === langKind)
+
+      if (langModels.length === 0) {
+        return
+      }
+
+      settingStore.asrKind = langModels[0].name
+    })
+
 
     return {defaultOption, settingStore, leftArrowSvg, rightArrowSvg, mainResultStore};
   },

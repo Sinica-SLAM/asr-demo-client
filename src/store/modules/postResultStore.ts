@@ -5,7 +5,7 @@ import {useSettingStore} from "@/store/modules/settingStore";
 
 
 interface postResultState {
-  wordAlignments: WordAlignment[][]
+  wordAlignments: (WordAlignment[] | undefined)[]
 }
 
 
@@ -15,13 +15,15 @@ export const usePostResultStore = defineStore({
     wordAlignments: []
   }),
   getters: {
-    getWordAlignments: (state): WordAlignment[][] => state.wordAlignments,
+    getWordAlignments: (state): (WordAlignment[] | undefined)[] => state.wordAlignments,
     getWordAlignmentsLength: (state): number => state.wordAlignments.length,
   },
   actions: {
     async appendFromAPI(id: string, start: number, length: number) {
+      this.wordAlignments.push(undefined);
+      const index = this.wordAlignments.length - 1;
       const settingStore = useSettingStore();
-      const data: WordAlignment[] = (await axios.post("https://140.109.16.218:8080/recognize", {
+      const data: WordAlignment[] = (await axios.post("https://140.109.16.218:8080/api/recognize", {
           langKind: settingStore.langKind,
           asrKind: settingStore.getAsrKind,
           id,
@@ -29,7 +31,7 @@ export const usePostResultStore = defineStore({
           length: length / 1000, //second
         })
       ).data;
-      this.wordAlignments.push(data.filter((w) => w.word !== "，"))
+      this.wordAlignments[index] = data.filter((w) => w.word !== "，");
     },
   }
 })
