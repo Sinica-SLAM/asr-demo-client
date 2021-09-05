@@ -14,12 +14,10 @@
       @mouseover="() =>(hover = true)"
   >
     <ruby
-        v-for="(char, charIndex) in props.alignment.word"
-        :key="props.alignment.start + char"
     >
-      {{ char }}
+      {{ props.alignment.word }}
       <rp>(</rp>
-      <rt>{{ tokens.length > charIndex ? tokens[charIndex] : undefined }}</rt>
+      <rt>{{ props.alignment.token ?? "" }}</rt>
       <rp>)</rp>
     </ruby>
     <WordCandidates
@@ -31,7 +29,7 @@
 <script lang="ts">
 
 import {WordAlignment} from "@/utils/dictate";
-import {computed, defineComponent, PropType, ref} from "vue";
+import {defineComponent, PropType, ref} from "vue";
 import "@/assets/scss/components/home/AsrDemoCard/ResultArea/ResultSegment/result-segment-word.scss";
 import WordCandidates from "./WordCandidates.vue";
 
@@ -53,8 +51,7 @@ export default defineComponent({
   },
   setup(props, {emit}) {
     const hover = ref(false);
-    const tokens = computed(() => (props.alignment.token ?? "").split(" "))
-    return {props, emit, hover, tokens};
+    return {props, emit, hover};
   },
 });
 </script>
