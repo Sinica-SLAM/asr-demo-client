@@ -20,6 +20,8 @@ export const useSettingStore = defineStore({
           return 8889
         case "tailo_0630_taibun":
           return 8890
+        case "kenkone":
+          return 8891
         default:
           return 8888
       }

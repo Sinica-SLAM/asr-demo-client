@@ -57,7 +57,8 @@ export default defineComponent({
         },
         {
           langKind: "Taibun", name: "tailo_0630_taibun"
-        }
+        },
+        {langKind: "Mandarin", name: "kenkone"}
       ],
     };
     const settingStore = useSettingStore()
