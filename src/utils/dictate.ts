@@ -12,14 +12,14 @@ class Dictate {
     this.init();
   }
 
-  private port = 8888;
+  private asrKind = "formospeech_me_1";
 
   private get server(): string {
-    return `wss://140.109.16.218:${this.port}/client/ws/speech`;
+    return `wss://asrvm.iis.sinica.edu.tw:8080/websocket/${this.asrKind}/speech`;
   }
 
   private get serverStatus(): string {
-    return `wss://140.109.16.218:${this.port}/client/ws/status`;
+    return `wss://asrvm.iis.sinica.edu.tw:8080/websocket/${this.asrKind}/status`;
   }
 
   private readonly referenceHandler: string =
@@ -48,28 +48,8 @@ class Dictate {
     }
   }
 
-  private monitorServerStatus() {
-    if (this.wsServerStatus) {
-      this.wsServerStatus.close();
-    }
-    this.wsServerStatus = new WebSocket(this.serverStatus);
-    this.wsServerStatus.onmessage = (evt: MessageEvent) => {
-      console.log(evt.data);
-    };
-  }
-
-  private cancel() {
-    if (this.recorder) {
-      this.recorder.startRecording();
-    }
-    if (this.ws) {
-      this.ws.close();
-      this.ws = undefined;
-    }
-  }
-
-  public async startListening(port: number): Promise<void> {
-    this.port = port;
+  public async startListening(asrKind: string): Promise<void> {
+    this.asrKind = asrKind;
 
     if (this.recorder) {
       await this.recorder.stopRecording();
@@ -89,6 +69,26 @@ class Dictate {
     } catch (e) {
       console.log("No web socket support in this browser!");
     }
+  }
+
+  private cancel() {
+    if (this.recorder) {
+      this.recorder.startRecording();
+    }
+    if (this.ws) {
+      this.ws.close();
+      this.ws = undefined;
+    }
+  }
+
+  private monitorServerStatus() {
+    if (this.wsServerStatus) {
+      this.wsServerStatus.close();
+    }
+    this.wsServerStatus = new WebSocket(this.serverStatus, "optionalProtocol");
+    this.wsServerStatus.onmessage = (evt: MessageEvent) => {
+      console.log(evt.data);
+    };
   }
 
   public async stopListening(): Promise<void> {
@@ -118,7 +118,7 @@ class Dictate {
 
   private setWebSocket() {
     const url = this.server + "?" + this.contentType;
-    this.ws = new WebSocket(url);
+    this.ws = new WebSocket(url, "optionalProtocol");
     this.ws.onmessage = async (e: MessageEvent) => {
       const data: WSResponse = JSON.parse(e.data);
       if (data.status === 0) {

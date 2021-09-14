@@ -66,7 +66,7 @@ export const useMainResultStore = defineStore({
     startReadTimeRecognition() {
       this.recognizing = true
       this.type = "realtime"
-      this.dictate.startListening(useSettingStore().getModulePort)
+      this.dictate.startListening(useSettingStore().getAsrKind)
     },
     endReadTimeRecognition() {
       this.recognizing = false
