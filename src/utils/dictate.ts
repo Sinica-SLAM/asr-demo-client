@@ -15,11 +15,11 @@ class Dictate {
   private asrKind = "formospeech_me_1";
 
   private get server(): string {
-    return `wss://asrvm.iis.sinica.edu.tw:8080/websocket/${this.asrKind}/speech`;
+    return `wss://asrvm.iis.sinica.edu.tw/websocket/${this.asrKind}/speech`;
   }
 
   private get serverStatus(): string {
-    return `wss://asrvm.iis.sinica.edu.tw:8080/websocket/${this.asrKind}/status`;
+    return `wss://asrvm.iis.sinica.edu.tw/websocket/${this.asrKind}/status`;
   }
 
   private readonly referenceHandler: string =
