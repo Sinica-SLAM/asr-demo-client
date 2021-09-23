@@ -85,7 +85,7 @@ class Dictate {
     if (this.wsServerStatus) {
       this.wsServerStatus.close();
     }
-    this.wsServerStatus = new WebSocket(this.serverStatus, "optionalProtocol");
+    this.wsServerStatus = new WebSocket(this.serverStatus);
     this.wsServerStatus.onmessage = (evt: MessageEvent) => {
       console.log(evt.data);
     };
@@ -118,7 +118,7 @@ class Dictate {
 
   private setWebSocket() {
     const url = this.server + "?" + this.contentType;
-    this.ws = new WebSocket(url, "optionalProtocol");
+    this.ws = new WebSocket(url);
     this.ws.onmessage = async (e: MessageEvent) => {
       const data: WSResponse = JSON.parse(e.data);
       if (data.status === 0) {
