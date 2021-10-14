@@ -3,7 +3,7 @@
     <div id="controller-container">
       <select v-model="settingStore.langKind">
         <option
-            v-for="lang in ['Mandarin', 'Taibun', 'Tailo']"
+            v-for="lang in ['Mandarin', 'Taibun', 'Other']"
             :key="lang"
             :value="lang"
         >
@@ -53,12 +53,13 @@ export default defineComponent({
           langKind: "Mandarin", name: "formospeech_me_1",
         },
         {
-          langKind: "Tailo", name: "tailo_0630"
+          langKind: "Other", name: "tailo_0630"
         },
         {
           langKind: "Taibun", name: "tailo_0630_taibun"
         },
-        {langKind: "Mandarin", name: "kenkone"}
+        {langKind: "Other", name: "kenkone"},
+        {langKind: "Other", name: "vgh"}
       ],
     };
     const settingStore = useSettingStore()
