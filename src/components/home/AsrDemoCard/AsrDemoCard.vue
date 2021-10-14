@@ -1,7 +1,7 @@
 <template>
   <div id="demo-card-container">
     <div class="title-container">
-      <div>{{ settingStore.getModuleName }}</div>
+      <div>{{ settingStore.getAsrKind }}</div>
     </div>
     <ResultArea/>
     <div v-if="type === 'realtime' && recognizing" class="controller-container">
@@ -46,7 +46,7 @@ export default defineComponent({
     const type = computed(() => mainResultStore.getType)
     const recognizing = computed(() => mainResultStore.getRecognizing)
     watch(
-        () => settingStore.getModulePort,
+        () => settingStore.getAsrKind,
         () => {
           mainResultStore.dictate.destroy();
           audioPlayerStore.setAudioURL("")
