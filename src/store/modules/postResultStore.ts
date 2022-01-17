@@ -1,21 +1,21 @@
-import {defineStore} from "pinia";
-import {WordAlignment} from "@/utils/dictate";
+import { useTranslateResultStore } from "./translateResultStore";
+import { defineStore } from "pinia";
+import { WordAlignment } from "@/utils/dictate";
 import axios from "axios";
-import {useSettingStore} from "@/store/modules/settingStore";
-
+import { useSettingStore } from "@/store/modules/settingStore";
 
 interface postResultState {
-  wordAlignments: (WordAlignment[] | undefined)[]
+  wordAlignments: (WordAlignment[] | undefined)[];
 }
-
 
 export const usePostResultStore = defineStore({
   id: "postResultStore",
   state: (): postResultState => ({
-    wordAlignments: []
+    wordAlignments: [],
   }),
   getters: {
-    getWordAlignments: (state): (WordAlignment[] | undefined)[] => state.wordAlignments,
+    getWordAlignments: (state): (WordAlignment[] | undefined)[] =>
+      state.wordAlignments,
     getWordAlignmentsLength: (state): number => state.wordAlignments.length,
   },
   actions: {
@@ -23,8 +23,9 @@ export const usePostResultStore = defineStore({
       this.wordAlignments.push(undefined);
       const index = this.wordAlignments.length - 1;
       const settingStore = useSettingStore();
-      const data: WordAlignment[] = (await axios.post("https://asrvm.iis.sinica.edu.tw/demo/postRecognize", {
-          langKind: settingStore.langKind,
+      const data: WordAlignment[] = (
+        await axios.post("https://asrvm.iis.sinica.edu.tw/demo/postRecognize", {
+          langKind: settingStore.getLangKind,
           asrKind: settingStore.getAsrKind,
           id,
           start: start / 1000,
@@ -32,6 +33,11 @@ export const usePostResultStore = defineStore({
         })
       ).data;
       this.wordAlignments[index] = data.filter((w) => w.word !== "，");
+      if (settingStore.getLangKind == "Taibun") {
+        useTranslateResultStore().appendFromAPI(
+          (this.wordAlignments[index] ?? []).map((w) => w.word).join(" ")
+        );
+      }
     },
-  }
-})
+  },
+});

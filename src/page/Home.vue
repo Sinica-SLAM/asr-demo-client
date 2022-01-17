@@ -3,42 +3,44 @@
     <div id="controller-container">
       <select v-model="settingStore.langKind">
         <option
-            v-for="lang in ['Mandarin', 'Taibun', 'Other']"
-            :key="lang"
-            :value="lang"
+          v-for="lang in ['Mandarin', 'Taibun', 'Other']"
+          :key="lang"
+          :value="lang"
         >
           {{ lang }}
         </option>
       </select>
       <select v-model="settingStore.asrKind">
         <option
-            v-for="model in defaultOption.models.filter((m)=>(m.langKind === settingStore.langKind))"
-            :key="model.name"
-            :value="model.name"
+          v-for="model in defaultOption.models.filter(
+            (m) => m.langKind === settingStore.langKind
+          )"
+          :key="model.name"
+          :value="model.name"
         >
           {{ model.name }}
         </option>
       </select>
-      <StartASRDialog :disabled="mainResultStore.getRecognizing"/>
+      <StartASRDialog :disabled="mainResultStore.getRecognizing" />
       <button disabled>
         History
       </button>
     </div>
 
-    <AsrDemoCard/>
+    <AsrDemoCard />
   </div>
 </template>
 
 <script>
-import {defineComponent, watch} from "vue";
+import { defineComponent, watch } from "vue";
 import AsrDemoCard from "@/components/home/AsrDemoCard/AsrDemoCard.vue";
 import leftArrowSvg from "@/assets/svg/left-arrow.svg";
 import rightArrowSvg from "@/assets/svg/right-arrow.svg";
 
 import "@/assets/scss/pages/home.scss";
-import {useSettingStore} from "@/store/modules/settingStore";
+import { useSettingStore } from "@/store/modules/settingStore";
 import StartASRDialog from "@/components/home/StartASRDialog";
-import {useMainResultStore} from "@/store/modules/mainResultStore";
+import { useMainResultStore } from "@/store/modules/mainResultStore";
 
 export default defineComponent({
   name: "Home",
@@ -50,36 +52,50 @@ export default defineComponent({
     const defaultOption = {
       models: [
         {
-          langKind: "Mandarin", name: "formospeech_me_1",
+          langKind: "Mandarin",
+          name: "formospeech_me_1",
         },
         {
-          langKind: "Other", name: "tailo_0630"
+          langKind: "Other",
+          name: "tailo_0630",
         },
         {
-          langKind: "Taibun", name: "tailo_0630_taibun"
+          langKind: "Taibun",
+          name: "tailo_0630_taibun",
         },
-        {langKind: "Other", name: "kenkone"},
-        {langKind: "Other", name: "vgh"}
+        { langKind: "Other", name: "kenkone" },
+        { langKind: "Other", name: "kenkone_211228" },
+        { langKind: "Other", name: "vgh" },
       ],
     };
-    const settingStore = useSettingStore()
-    const mainResultStore = useMainResultStore()
-    watch(() => settingStore.getLangKind, (langKind, prevLangKind) => {
-      if (langKind === prevLangKind) {
-        return
+    const settingStore = useSettingStore();
+    const mainResultStore = useMainResultStore();
+    watch(
+      () => settingStore.getLangKind,
+      (langKind, prevLangKind) => {
+        if (langKind === prevLangKind) {
+          return;
+        }
+
+        const langModels = defaultOption.models.filter(
+          (model) => model.langKind === langKind
+        );
+
+        if (langModels.length === 0) {
+          return;
+        }
+
+        settingStore.asrKind = langModels[0].name;
       }
+    );
 
-      const langModels = defaultOption.models.filter((model) => model.langKind === langKind)
-
-      if (langModels.length === 0) {
-        return
-      }
-
-      settingStore.asrKind = langModels[0].name
-    })
-
-
-    return {defaultOption, settingStore, leftArrowSvg, rightArrowSvg, mainResultStore};
+    return {
+      defaultOption,
+      settingStore,
+      leftArrowSvg,
+      rightArrowSvg,
+      mainResultStore,
+    };
   },
 });
 </script>
