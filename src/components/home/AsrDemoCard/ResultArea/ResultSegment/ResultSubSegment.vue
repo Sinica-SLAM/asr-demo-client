@@ -69,7 +69,7 @@ export default defineComponent({
         case "p":
           return usePostResultStore().wordAlignments[props.index];
         case "t":
-          return useTranslateResultStore().wordAlignments[props.index];
+          return useTranslateResultStore().getWordAlignments[props.index];
         default:
           return useMainResultStore().segments[props.index].wordAlignment;
       }

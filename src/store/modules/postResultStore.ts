@@ -23,7 +23,7 @@ export const usePostResultStore = defineStore({
       this.wordAlignments.push(undefined);
       const index = this.wordAlignments.length - 1;
       const settingStore = useSettingStore();
-      const data: WordAlignment[] = (
+      const data: WordAlignment[][] = (
         await axios.post("https://asrvm.iis.sinica.edu.tw/demo/postRecognize", {
           langKind: settingStore.getLangKind,
           asrKind: settingStore.getAsrKind,
@@ -32,7 +32,8 @@ export const usePostResultStore = defineStore({
           length: length / 1000, //second
         })
       ).data;
-      this.wordAlignments[index] = data.filter((w) => w.word !== "，");
+      console.log(data);
+      this.wordAlignments[index] = data[0].filter((w) => w.word !== "，");
       if (settingStore.getLangKind == "Taibun") {
         useTranslateResultStore().appendFromAPI(
           (this.wordAlignments[index] ?? []).map((w) => w.word).join(" ")

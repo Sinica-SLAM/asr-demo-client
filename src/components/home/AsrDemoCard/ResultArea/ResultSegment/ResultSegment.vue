@@ -59,7 +59,7 @@
         "
         :canPlay="false"
         :index="props.index"
-        type="p"
+        type="t"
       />
     </div>
   </div>
@@ -73,6 +73,7 @@ import { timeFormat } from "@/utils/timeFormat";
 import ResultSubSegment from "@/components/home/AsrDemoCard/ResultArea/ResultSegment/ResultSubSegment.vue";
 import { useMainResultStore } from "@/store/modules/mainResultStore";
 import { usePostResultStore } from "@/store/modules/postResultStore";
+import { useTranslateResultStore } from "@/store/modules/translateResultStore";
 import { useAudioPlayerStore } from "@/store/modules/audioPlayerStore";
 
 export default defineComponent({
@@ -115,7 +116,7 @@ export default defineComponent({
     );
 
     const translateWordAlignmentsLength = computed(
-      () => usePostResultStore().getWordAlignmentsLength
+      () => useTranslateResultStore().getWordAlignmentsLength
     );
 
     return {
