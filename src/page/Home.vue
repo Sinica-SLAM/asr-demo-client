@@ -55,17 +55,6 @@ export default defineComponent({
           langKind: "Mandarin",
           name: "sa_me_2.0",
         },
-        {
-          langKind: "Other",
-          name: "tailo_0630",
-        },
-        {
-          langKind: "Taibun",
-          name: "tailo_0630_taibun",
-        },
-        { langKind: "Other", name: "kenkone" },
-        { langKind: "Other", name: "kenkone_211228" },
-        { langKind: "Other", name: "vgh" },
       ],
     };
     const settingStore = useSettingStore();
