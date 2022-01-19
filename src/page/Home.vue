@@ -53,7 +53,7 @@ export default defineComponent({
       models: [
         {
           langKind: "Mandarin",
-          name: "formospeech_me_1",
+          name: "sa_me_2.0",
         },
         {
           langKind: "Other",
