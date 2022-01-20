@@ -28,6 +28,9 @@
     </div>
 
     <AsrDemoCard />
+    <div class="footer">
+      Copyright © <a href="http://slam.iis.sinica.edu.tw">SLAM</a> Lab. All rights reserved.
+    </div>
   </div>
 </template>
 
