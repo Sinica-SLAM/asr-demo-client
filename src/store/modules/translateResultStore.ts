@@ -16,9 +16,7 @@ export const useTranslateResultStore = defineStore({
     getWordAlignmentsLength: (state): number => state.wordAlignments.length,
   },
   actions: {
-    async appendFromAPI(sentence: string) {
-      this.wordAlignments.push(undefined);
-      const index = this.wordAlignments.length - 1;
+    async appendFromAPI(index: number, sentence: string) {
       const data: { result: string } = (
         await axios.post("https://asrvm.iis.sinica.edu.tw/api/v1/translation", {
           sentence,
@@ -29,9 +27,7 @@ export const useTranslateResultStore = defineStore({
         .split(" ")
         .map((s) => ({ word: s }));
     },
-    appendUndefined() {
-      this.wordAlignments.push(undefined);
-    },
+
     reset() {
       this.wordAlignments = [];
     },

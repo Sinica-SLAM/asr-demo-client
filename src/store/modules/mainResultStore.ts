@@ -108,7 +108,7 @@ export const useMainResultStore = defineStore({
 
       const id = String(new Date().getTime());
 
-      for (const wordAlignment of data) {
+      for (const [index, wordAlignment] of data.entries()) {
         const segmentStart = wordAlignment[0].start;
         const segmentLength =
           wordAlignment[wordAlignment.length - 1].start +
@@ -125,6 +125,7 @@ export const useMainResultStore = defineStore({
         });
         if (useSettingStore().getLangKind == "Taibun") {
           useTranslateResultStore().appendFromAPI(
+            index,
             wordAlignment.map((w) => w.word).join(" ")
           );
         }
