@@ -1,12 +1,12 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 
 interface audioPlayerState {
-  audioURL: string,
-  player: HTMLAudioElement | undefined
-  duration: number,
-  currentTime: number, //second
-  playing: boolean,
-  timeout: number | undefined
+  audioURL: string;
+  player: HTMLAudioElement | undefined;
+  duration: number;
+  currentTime: number; //second
+  playing: boolean;
+  timeout: number | undefined;
 }
 
 export const useAudioPlayerStore = defineStore({
@@ -17,55 +17,55 @@ export const useAudioPlayerStore = defineStore({
     duration: 0,
     currentTime: 0,
     playing: false,
-    timeout: undefined
+    timeout: undefined,
   }),
   getters: {
     getDuration: (state) => state.duration,
     getCurrentTime: (state) => state.currentTime,
-    getPlaying: (state) => state.playing
+    getPlaying: (state) => state.playing,
   },
   actions: {
     setPlayer(newPlayer: HTMLAudioElement) {
-      this.player = newPlayer
-      console.log(this.player)
+      this.player = newPlayer;
+      console.log(this.player);
     },
     setAudioURL(newURL: string) {
-      this.audioURL = newURL
+      this.audioURL = newURL;
     },
     setCurrentTime(newTime: number) {
       if (this.player) {
-        this.player.currentTime = newTime
+        this.player.currentTime = newTime;
       }
     },
     addCurrentTime(addition: number) {
       if (this.player) {
-        this.player.currentTime += addition
+        this.player.currentTime += addition;
       }
     },
     play() {
       if (this.player && !this.playing) {
-        this.player?.play()
-        this.playing = true
+        this.player?.play();
+        this.playing = true;
       }
     },
     pause() {
       if (this.player && this.playing) {
-        this.player.pause()
-        this.playing = false
+        this.player.pause();
+        this.playing = false;
       }
     },
     ondurationchange() {
       if (this.player) {
-        this.duration = this.player.duration
+        this.duration = this.player.duration;
       }
     },
     ontimeupdate() {
       if (this.player) {
-        this.currentTime = this.player.currentTime
+        this.currentTime = this.player.currentTime;
       }
     },
     onended() {
-      this.playing = false
+      this.playing = false;
     },
     playWithLength(start: number, length: number) {
       if (this.timeout) {
@@ -73,11 +73,15 @@ export const useAudioPlayerStore = defineStore({
       }
 
       this.setCurrentTime(start / 1000);
-      this.play()
+      this.play();
 
       this.timeout = window.setTimeout(() => {
         this.pause();
       }, length);
     },
-  }
-})
+    reset() {
+      this.audioURL = "";
+      this.player = undefined;
+    },
+  },
+});

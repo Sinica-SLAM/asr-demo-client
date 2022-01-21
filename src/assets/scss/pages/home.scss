@@ -5,8 +5,13 @@
   margin: 0 auto;
   max-width: 1040px;
   min-width: 256px;
+  h1 {
+    text-align: left;
+    padding: 10px 0;
+    font-size: xx-large;
+  }
   #controller-container {
-    max-width: 250px;
+    max-width: 450px;
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
@@ -29,6 +34,10 @@
       &:disabled {
         background-color: #4ea7ff;
         cursor: auto;
+      }
+
+      input {
+        display: none;
       }
     }
   }

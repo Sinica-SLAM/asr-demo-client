@@ -29,5 +29,11 @@ export const useTranslateResultStore = defineStore({
         .split(" ")
         .map((s) => ({ word: s }));
     },
+    appendUndefined() {
+      this.wordAlignments.push(undefined);
+    },
+    reset() {
+      this.wordAlignments = [];
+    },
   },
 });

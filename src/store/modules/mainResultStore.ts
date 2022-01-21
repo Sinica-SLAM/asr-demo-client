@@ -1,3 +1,4 @@
+import { useTranslateResultStore } from "./translateResultStore";
 import { Segment } from "@/components/home/AsrDemoCard/asrDemoCard";
 import { defineStore } from "pinia";
 import { getCandidates } from "@/utils/candidates";
@@ -13,8 +14,9 @@ interface mainResultState {
   segments: Segment[];
   currentTimeCode: number;
   recognizing: boolean;
-  type: "realtime" | "upload" | undefined;
+  type: "realtime" | "upload" | "youtube" | undefined;
   dictate: Dictate;
+  vid: string | undefined;
 }
 
 export const useMainResultStore = defineStore({
@@ -26,13 +28,16 @@ export const useMainResultStore = defineStore({
     recognizing: false,
     type: undefined,
     dictate: new Dictate(),
+    vid: undefined,
   }),
   getters: {
     getTempText: (state): string => state.tempText,
     getSegments: (state): Segment[] => state.segments,
     getCurrentTimeCode: (state): number => state.currentTimeCode,
     getRecognizing: (state): boolean => state.recognizing,
-    getType: (state): "realtime" | "upload" | undefined => state.type,
+    getType: (state): "realtime" | "upload" | "youtube" | undefined =>
+      state.type,
+    getVid: (state): string | undefined => state.vid,
   },
   actions: {
     appendFromDictate(res: WSResponse) {
@@ -69,6 +74,10 @@ export const useMainResultStore = defineStore({
       this.type = type;
     },
     startReadTimeRecognition() {
+      this.reset();
+      useAudioPlayerStore().reset();
+      usePostResultStore().reset();
+      useTranslateResultStore().reset();
       this.recognizing = true;
       this.type = "realtime";
       this.dictate.startListening(useSettingStore().getAsrKind);
@@ -78,6 +87,11 @@ export const useMainResultStore = defineStore({
       this.dictate.stopListening();
     },
     async startUploadRecognition(file: File) {
+      this.reset();
+      useAudioPlayerStore().reset();
+      usePostResultStore().reset();
+      useTranslateResultStore().reset();
+
       const formData = new FormData();
       this.recognizing = true;
       this.type = "upload";
@@ -109,10 +123,37 @@ export const useMainResultStore = defineStore({
           segmentStart: new Date(segmentStart * 1000),
           segmentLength: segmentLength * 1000,
         });
+        if (useSettingStore().getLangKind == "Taibun") {
+          useTranslateResultStore().appendFromAPI(
+            wordAlignment.map((w) => w.word).join(" ")
+          );
+        }
       }
 
       useAudioPlayerStore().setAudioURL(URL.createObjectURL(file));
       this.recognizing = false;
+    },
+    async startYoutubeRecognition(vid: string) {
+      this.reset();
+      usePostResultStore().reset();
+      useTranslateResultStore().reset();
+
+      const data = (
+        await axios.post("https://asrvm.iis.sinica.edu.tw/demo/youtubeSrt", {
+          asrKind: useSettingStore().getAsrKind,
+          vid,
+        })
+      ).data;
+
+      this.vid = data.vid;
+
+      console.log(data);
+    },
+    reset() {
+      this.tempText = "";
+      this.segments = [];
+      this.currentTimeCode = 0;
+      this.vid = undefined;
     },
   },
 });
