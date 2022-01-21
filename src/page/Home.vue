@@ -1,6 +1,6 @@
 <template>
   <div id="home" class="page-container">
-    <h1>Sinica 中研院語音辨識系統</h1>
+    <h1>SinicaASR 中研院語音辨識系統</h1>
     <div id="controller-container">
       <select v-model="settingStore.asrKind" @change="selectOnChange">
         <option
@@ -72,12 +72,12 @@ export default defineComponent({
         {
           langKind: "Mandarin",
           name: "sa_me_2.0",
-          displayName: "[華語] sa_me_2.0",
+          displayName: "【華語】 sa_me_2.0",
         },
         {
           langKind: "Taibun",
           name: "sa_te_1.0",
-          displayName: "[臺語] sa_te_1.0",
+          displayName: "【臺語】 sa_te_1.0",
         },
       ],
     };
