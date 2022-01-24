@@ -19,10 +19,10 @@
           }
         "
       >
-        即時辨識
+        即時
       </button>
       <button @click="() => fileInput?.click()">
-        上傳音檔
+        上傳
         <input
           ref="fileInput"
           accept="audio/wav,audio/mpeg3,audio/mp4,video/mp4,audio/m4a,audio/mpeg"
@@ -41,8 +41,10 @@
     <AsrDemoCard v-if="mainResultStore.getType !== 'youtube'" />
     <YoutubeIframe v-else :vid="mainResultStore.getVid" />
     <div class="footer">
-      Copyright © <a href="http://slam.iis.sinica.edu.tw">SLAM</a> Lab. All
-      rights reserved.
+      <a href="http://slam.iis.sinica.edu.tw">語音、語言暨音樂處理實驗室</a>，<a
+        href="https://www.iis.sinica.edu.tw/zh/index.html"
+        >中央研究院資訊科學研究所</a
+      >
     </div>
   </div>
 </template>
@@ -72,36 +74,18 @@ export default defineComponent({
         {
           langKind: "Mandarin",
           name: "sa_me_2.0",
-          displayName: "【華語】 sa_me_2.0",
+          displayName: "【華語】sa_me_2.0",
         },
         {
           langKind: "Taibun",
           name: "sa_te_1.0",
-          displayName: "【臺語】 sa_te_1.0",
+          displayName: "【臺語】sa_te_1.0",
         },
       ],
     };
     const settingStore = useSettingStore();
     const mainResultStore = useMainResultStore();
     const fileInput = (ref < HTMLInputElement) | (null > null);
-    watch(
-      () => settingStore.getLangKind,
-      (langKind, prevLangKind) => {
-        if (langKind === prevLangKind) {
-          return;
-        }
-
-        const langModels = defaultOption.models.filter(
-          (model) => model.langKind === langKind
-        );
-
-        if (langModels.length === 0) {
-          return;
-        }
-
-        settingStore.asrKind = langModels[0].name;
-      }
-    );
 
     const selectOnChange = (e) => {
       const model = defaultOption.models.find(
@@ -109,6 +93,7 @@ export default defineComponent({
       );
       if (model) {
         settingStore.langKind = model.langKind;
+        settingStore.displayName = model.displayName;
         console.log(settingStore.langKind);
       }
     };

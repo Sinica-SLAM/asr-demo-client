@@ -1,34 +1,32 @@
 <template>
   <div id="demo-card-container">
     <div class="title-container">
-      <div>{{ settingStore.getAsrKind }}</div>
+      <div>{{ settingStore.displayName }}</div>
     </div>
-    <ResultArea/>
+    <ResultArea />
     <div v-if="type === 'realtime' && recognizing" class="controller-container">
       <div
-          class="svg-container"
-          @click="
-          () => mainResultStore.endReadTimeRecognition()
-        "
+        class="svg-container"
+        @click="() => mainResultStore.endReadTimeRecognition()"
       >
-        <img :src="stopSVG" alt="stop" height="44" width="44"/>
+        <img :src="stopSVG" alt="stop" height="44" width="44" />
       </div>
     </div>
-    <LoadingCircle v-if="type === 'upload' && recognizing"/>
-    <AudioPlayer v-if="audioURL" ref="audioPlayer" :audioURL="audioURL"/>
+    <LoadingCircle v-if="type === 'upload' && recognizing" />
+    <AudioPlayer v-if="audioURL" ref="audioPlayer" :audioURL="audioURL" />
   </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, watch} from "vue";
+import { computed, defineComponent, watch } from "vue";
 import "@/assets/scss/components/home/AsrDemoCard/asr-demo-card.scss";
 import AudioPlayer from "./AudioPlayer/AudioPlayer.vue";
 import microphoneSVG from "@/assets/svg/microphone.svg";
 import stopSVG from "@/assets/svg/stop.svg";
 import ResultArea from "@/components/home/AsrDemoCard/ResultArea/ResultArea.vue";
-import {useMainResultStore} from "@/store/modules/mainResultStore";
-import {useSettingStore} from "@/store/modules/settingStore";
-import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
+import { useMainResultStore } from "@/store/modules/mainResultStore";
+import { useSettingStore } from "@/store/modules/settingStore";
+import { useAudioPlayerStore } from "@/store/modules/audioPlayerStore";
 import LoadingCircle from "@/components/shared/LoadingCircle.vue";
 
 export default defineComponent({
@@ -39,18 +37,18 @@ export default defineComponent({
     ResultArea,
   },
   setup() {
-    const audioPlayerStore = useAudioPlayerStore()
-    const mainResultStore = useMainResultStore()
-    const settingStore = useSettingStore()
-    const audioURL = computed(() => audioPlayerStore.audioURL)
-    const type = computed(() => mainResultStore.getType)
-    const recognizing = computed(() => mainResultStore.getRecognizing)
+    const audioPlayerStore = useAudioPlayerStore();
+    const mainResultStore = useMainResultStore();
+    const settingStore = useSettingStore();
+    const audioURL = computed(() => audioPlayerStore.audioURL);
+    const type = computed(() => mainResultStore.getType);
+    const recognizing = computed(() => mainResultStore.getRecognizing);
     watch(
-        () => settingStore.getAsrKind,
-        () => {
-          mainResultStore.dictate.destroy();
-          audioPlayerStore.setAudioURL("")
-        }
+      () => settingStore.getAsrKind,
+      () => {
+        mainResultStore.dictate.destroy();
+        audioPlayerStore.setAudioURL("");
+      }
     );
 
     return {

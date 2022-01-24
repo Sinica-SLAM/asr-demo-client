@@ -1,7 +1,7 @@
 <template>
   <DialogBox>
     <template #activator="{active}">
-      <button :disabled="props.disabled" @click="active">Youtube 字幕</button>
+      <button :disabled="props.disabled" @click="active">YouTube</button>
     </template>
     <template #default="{inactive}">
       <div class="youtube-dialog-content">
