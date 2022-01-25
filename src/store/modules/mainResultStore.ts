@@ -58,11 +58,14 @@ export const useMainResultStore = defineStore({
         segmentStart: new Date(res["segment-start"] * 1000),
         segmentLength: res["segment-length"] * 1000,
       });
-      usePostResultStore().appendFromAPI(
-        res.id,
-        this.currentTimeCode,
-        res["segment-length"] * 1000
-      );
+      if (useSettingStore().getLangKind !== "Other") {
+        usePostResultStore().appendFromAPI(
+          res.id,
+          this.currentTimeCode,
+          res["segment-length"] * 1000
+        );
+      }
+
       this.currentTimeCode =
         (res["segment-start"] + res["segment-length"]) * 1000;
       this.tempText = "";

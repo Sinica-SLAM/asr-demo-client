@@ -81,6 +81,16 @@ export default defineComponent({
           name: "sa_te_1.0",
           displayName: "【臺語】sa_te_1.0",
         },
+        {
+          langKind: "Other",
+          name: "sa_me_2.0+kenkone",
+          displayName: "【康統】sa_me_2.0+kenkone",
+        },
+        {
+          langKind: "Other",
+          name: "sa_me_2.0+vgh",
+          displayName: "【榮總】sa_me_2.0+vgh",
+        },
       ],
     };
     const settingStore = useSettingStore();
