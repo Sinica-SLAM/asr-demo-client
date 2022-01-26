@@ -48,8 +48,18 @@
     position: fixed;
     bottom: 0;
     width: 100%;
-    line-height: 50px;
-    background: darkgray;
-    color: #fff;
+    height: 55px;
+    padding-top: 7.5px;
+    padding-bottom: 7.5px;
+    text-align: center;
+    line-height: 20px;
+    background: #B0C4DE;
+    color: black;
+    
+    a:link, a:visited,  a:hover, a:active {
+      color: #000000;
+      text-decoration: none;
+    }
+
   }
 }
