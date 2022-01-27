@@ -47,7 +47,7 @@
     <YoutubeIframe v-else :vid="mainResultStore.getVid" />
     <div class="footer">
       <p>
-        李鴻欣博士 (Hung-Shin Lee) 
+        李鴻欣博士 (Dr. Hung-Shin Lee) 
         <a href="mailto:hungshinlee@gmail.com">📧</a> &emsp;|&emsp;
         <a href="https://jamfly.github.io"> 鄭耀飛 (Yao-Fei Cheng) </a> 
         <a href="mailto:freddy@iis.sinica.edu.tw">📧</a> &emsp;|&emsp;
