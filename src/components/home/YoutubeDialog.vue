@@ -5,8 +5,8 @@
     </template>
     <template #default="{inactive}">
       <div class="youtube-dialog-content">
-        <div>輸入 vid:</div>
-        <input v-model="vid" placeholder="input youtube vid" />
+        <div>輸入影片網址：</div>
+        <input v-model="vid" placeholder="https://www.youtube.com/watch?v=hhrur8WZjGo" />
         <button
           @click="
             () => {
@@ -42,7 +42,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const vid = ref("");
+    const vid = ref("https://www.youtube.com/watch?v=hhrur8WZjGo");
     const mainResultStore = useMainResultStore();
     return {
       props,
