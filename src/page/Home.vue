@@ -1,5 +1,8 @@
 <template>
   <div id="home" class="page-container">
+    <div class="logo">
+      <img src="../../public/sinica.png">
+    </div>
     <h1>SinicaASR 中研院語音辨識系統</h1>
     <div id="controller-container">
       <select v-model="settingStore.asrKind" @change="selectOnChange">
