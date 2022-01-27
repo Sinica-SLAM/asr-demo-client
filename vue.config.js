@@ -12,4 +12,10 @@ module.exports = {
   configureWebpack: {
     plugins: [new ThreadsPlugin({ globalObject: "self" })],
   },
+  pages: {
+    index: {
+      entry: "src/main.ts",
+      title: "SinicaASR",
+    },
+  },
 };
