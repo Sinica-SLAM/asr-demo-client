@@ -1,7 +1,7 @@
 <template>
   <div id="home" class="page-container">
     <div class="logo">
-      <img src="../../public/sinica.png">
+      <img src="../../public/sinica.png" />
     </div>
     <h1>SinicaASR 中研院語音辨識系統</h1>
     <div id="controller-container">
@@ -40,7 +40,7 @@
       </button>
       <YoutubeDialog />
       <button
-        onclick="window.location.href = 'https://sinica-slam.notion.site/SinicaASR-APIs-9cb1ac1f0c254adca6fc54f86b566131'"  
+        onclick="window.location.href = 'https://sinica-slam.notion.site/SinicaASR-APIs-9cb1ac1f0c254adca6fc54f86b566131'"
       >
         API
       </button>
@@ -50,21 +50,25 @@
     <YoutubeIframe v-else :vid="mainResultStore.getVid" />
     <div class="footer">
       <p>
-        李鴻欣博士 (Dr. Hung-Shin Lee) 
+        李鴻欣博士 (Dr. Hung-Shin Lee)
         <a href="mailto:hungshinlee@gmail.com">📧</a> &emsp;|&emsp;
-        <a href="https://jamfly.github.io"> 鄭耀飛 (Yao-Fei Cheng) </a> 
+        <a href="https://jamfly.github.io"> 鄭耀飛 (Yao-Fei Cheng) </a>
         <a href="mailto:freddy@iis.sinica.edu.tw">📧</a> &emsp;|&emsp;
         <a href="https://github.com/txya900619">陳力瑋 (Li-Wei Chen) </a>
         <a href="wayne900619@gmail.com">📧</a>
-        <br>
-        <a href="https://homepage.iis.sinica.edu.tw/pages/whm/index_zh.html"> 王新民研究員 (Dr. Hsin-Min Wang) </a>
+        <br />
+        <a href="https://homepage.iis.sinica.edu.tw/pages/whm/index_zh.html">
+          王新民研究員 (Dr. Hsin-Min Wang)
+        </a>
         <a href="mailto:whm@iis.sinica.edu.tw">📧</a> &emsp;|&emsp;
-        <a href="https://homepage.iis.sinica.edu.tw/pages/mtko/index_zh.html"> 高明達研究員 (Dr. Ming-Tat Ko) </a>
+        <a href="https://homepage.iis.sinica.edu.tw/pages/mtko/index_zh.html">
+          高明達研究員 (Dr. Ming-Tat Ko)
+        </a>
         <a href="mailto:mtko@iis.sinica.edu.tw">📧</a> &emsp;|&emsp;
         <a href="http://slam.iis.sinica.edu.tw">
           語音、語言暨音樂處理實驗室 (Speech, Language and Music Processing Lab)
         </a>
-      </p>  
+      </p>
     </div>
   </div>
 </template>
@@ -95,6 +99,11 @@ export default defineComponent({
           langKind: "Mandarin",
           name: "sa_me_2.0",
           displayName: "【華語】sa_me_2.0",
+        },
+        {
+          langKind: "Mandarin",
+          name: "sa_me_2.1",
+          displayName: "【華語】sa_me_2.1",
         },
         {
           langKind: "Taibun",
