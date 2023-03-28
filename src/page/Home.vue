@@ -21,6 +21,7 @@
             mainResultStore.startReadTimeRecognition();
           }
         "
+        :disabled="!online"
       >
         即時
       </button>
@@ -86,7 +87,7 @@ import { useMainResultStore } from "@/store/modules/mainResultStore";
 import YoutubeIframe from "@/components/home/YoutubeIframe/YoutubeIframe.vue";
 
 export default defineComponent({
-  name: "Home",
+  name: "home-page",
   components: {
     YoutubeDialog,
     AsrDemoCard,
@@ -99,32 +100,44 @@ export default defineComponent({
           langKind: "Mandarin",
           name: "sa_me_2.0",
           displayName: "【華語】sa_me_2.0",
+          online: true,
         },
         {
           langKind: "Mandarin",
           name: "sa_me_2.1",
           displayName: "【華語】sa_me_2.1",
+          online: true,
         },
         {
           langKind: "Taibun",
           name: "sa_te_1.0",
           displayName: "【臺語】sa_te_1.0",
+          online: true,
+        },
+        {
+          langKind: "Taibun",
+          name: "sa_te_2.0",
+          displayName: "【臺語】sa_te_2.0",
+          online: false,
         },
         {
           langKind: "Other",
           name: "sa_me_2.0+kenkone",
           displayName: "【康統】sa_me_2.0+kenkone",
+          online: true,
         },
         {
           langKind: "Other",
           name: "sa_me_2.0+vgh",
           displayName: "【榮總】sa_me_2.0+vgh",
+          online: true,
         },
       ],
     };
     const settingStore = useSettingStore();
     const mainResultStore = useMainResultStore();
     const fileInput = (ref < HTMLInputElement) | (null > null);
+    const online = ref(true);
 
     const selectOnChange = (e) => {
       const model = defaultOption.models.find(
@@ -133,7 +146,7 @@ export default defineComponent({
       if (model) {
         settingStore.langKind = model.langKind;
         settingStore.displayName = model.displayName;
-        console.log(settingStore.langKind);
+        online.value = model.online;
       }
     };
 
@@ -145,6 +158,7 @@ export default defineComponent({
       rightArrowSvg,
       mainResultStore,
       fileInput,
+      online,
     };
   },
 });
