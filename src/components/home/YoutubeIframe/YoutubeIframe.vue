@@ -9,13 +9,19 @@
     allowfullscreen
     v-if="props.vid"
   />
-  <LoadingCircle v-else />
+  <div v-else>
+    <LoadingCircle />
+    <div class="recognize-status" v-if="recognizeStatus">
+      {{ recognizeStatus }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import "@/assets/scss/components/home/YoutubeIframe/youtube-iframe.scss";
 import { computed, defineComponent } from "vue";
 import LoadingCircle from "@/components/shared/LoadingCircle.vue";
+import { useMainResultStore } from "@/store/modules/mainResultStore";
 
 export default defineComponent({
   name: "YoutubeIframe",
@@ -27,8 +33,11 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const mainResultStore = useMainResultStore();
+    const recognizeStatus = computed(() => mainResultStore.getRecognizeStatus);
     return {
       props,
+      recognizeStatus,
     };
   },
 });

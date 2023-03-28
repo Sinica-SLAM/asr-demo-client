@@ -12,6 +12,12 @@
         <img :src="stopSVG" alt="stop" height="44" width="44" />
       </div>
     </div>
+    <div
+      class="recognize-status"
+      v-if="type === 'upload' && recognizing && recognizeStatus"
+    >
+      {{ recognizeStatus }}
+    </div>
     <LoadingCircle v-if="type === 'upload' && recognizing" />
     <AudioPlayer v-if="audioURL" ref="audioPlayer" :audioURL="audioURL" />
   </div>
@@ -43,6 +49,7 @@ export default defineComponent({
     const audioURL = computed(() => audioPlayerStore.audioURL);
     const type = computed(() => mainResultStore.getType);
     const recognizing = computed(() => mainResultStore.getRecognizing);
+    const recognizeStatus = computed(() => mainResultStore.getRecognizeStatus);
     watch(
       () => settingStore.getAsrKind,
       () => {
@@ -59,6 +66,7 @@ export default defineComponent({
       recognizing,
       settingStore,
       mainResultStore,
+      recognizeStatus,
     };
   },
 });

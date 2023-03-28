@@ -26,9 +26,10 @@ export const useMainResultStore = defineStore({
     segments: [],
     currentTimeCode: 0,
     recognizing: false,
+    recognizeStatus: "",
     type: undefined,
     dictate: new Dictate(),
-    vid: undefined,
+    vid: undefined
   }),
   getters: {
     getTempText: (state): string => state.tempText,
@@ -38,6 +39,7 @@ export const useMainResultStore = defineStore({
     getType: (state): "realtime" | "upload" | "youtube" | undefined =>
       state.type,
     getVid: (state): string | undefined => state.vid,
+    getRecognizeStatus: (state): string => state.recognizeStatus,
   },
   actions: {
     appendFromDictate(res: WSResponse) {
@@ -50,13 +52,13 @@ export const useMainResultStore = defineStore({
       this.segments.push({
         id: res.id,
         wordAlignment: res.result.hypotheses[0]["word-alignment"].map(
-          (alignment) => ({
+          alignment => ({
             ...alignment,
-            candidates: candidatesMap.get(alignment.start) ?? [],
+            candidates: candidatesMap.get(alignment.start) ?? []
           })
         ),
         segmentStart: new Date(res["segment-start"] * 1000),
-        segmentLength: res["segment-length"] * 1000,
+        segmentLength: res["segment-length"] * 1000
       });
       if (useSettingStore().getLangKind !== "Other") {
         usePostResultStore().appendFromAPI(
@@ -73,7 +75,7 @@ export const useMainResultStore = defineStore({
     setTempText(text: string) {
       this.tempText = text;
     },
-    setType(type: "realtime" | "upload") {
+    setType(type: "realtime" | "upload" | "youtube") {
       this.type = type;
     },
     startReadTimeRecognition() {
@@ -89,6 +91,27 @@ export const useMainResultStore = defineStore({
       this.recognizing = false;
       this.dictate.stopListening();
     },
+
+    async pollRecognizeStatus(filename: string) {
+      const executePoll = async (
+        resolve: (value: any) => void,
+        reject: (reason?: any) => void
+      ) => {
+        const res = await axios.get(
+          `https://asrvm.iis.sinica.edu.tw/demo/result/${filename}`
+        );
+
+        if (res.data.done) {
+          return resolve(res.data.data);
+        } else {
+          this.recognizeStatus = res.data.data;
+          setTimeout(executePoll, 2000, resolve, reject);
+        }
+      };
+
+      return new Promise(executePoll);
+    },
+
     async startUploadRecognition(file: File) {
       this.reset();
       useAudioPlayerStore().reset();
@@ -97,17 +120,33 @@ export const useMainResultStore = defineStore({
 
       const formData = new FormData();
       this.recognizing = true;
+      this.recognizeStatus = "上傳檔案中...(1/3)";
       this.type = "upload";
       formData.append("file", file);
       formData.append("asrKind", useSettingStore().getAsrKind);
       formData.append("langKind", useSettingStore().getLangKind);
-      const data: WordAlignment[][] = (
-        await axios.post(
-          "https://asrvm.iis.sinica.edu.tw/demo/uploadRecognize",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        )
-      ).data;
+
+      const res = await axios.post(
+        "https://asrvm.iis.sinica.edu.tw/demo/uploadRecognize",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      if (res.status !== 200) {
+        alert(`上傳失敗, status_code: ${res.status}\n${res.data}`);
+        this.recognizing = false;
+        return;
+      }
+
+      const result = await this.pollRecognizeStatus(res.data);
+
+      if (typeof result === "string" || result instanceof String) {
+        alert(`辨識失敗, ${result}`);
+        this.recognizing = false;
+        return;
+      }
+
+      const data: WordAlignment[][] = result as WordAlignment[][];
 
       const id = String(new Date().getTime());
 
@@ -119,17 +158,17 @@ export const useMainResultStore = defineStore({
           segmentStart;
         this.segments.push({
           id,
-          wordAlignment: wordAlignment.map((alignment) => ({
+          wordAlignment: wordAlignment.map(alignment => ({
             ...alignment,
-            start: alignment.start - segmentStart,
+            start: alignment.start - segmentStart
           })),
           segmentStart: new Date(segmentStart * 1000),
-          segmentLength: segmentLength * 1000,
+          segmentLength: segmentLength * 1000
         });
         if (useSettingStore().getLangKind == "Taibun") {
           useTranslateResultStore().appendFromAPI(
             index,
-            wordAlignment.map((w) => w.word).join(" ")
+            wordAlignment.map(w => w.word).join(" ")
           );
         }
       }
@@ -137,27 +176,41 @@ export const useMainResultStore = defineStore({
       useAudioPlayerStore().setAudioURL(URL.createObjectURL(file));
       this.recognizing = false;
     },
+
     async startYoutubeRecognition(vid: string) {
       this.reset();
       usePostResultStore().reset();
       useTranslateResultStore().reset();
 
-      const data = (
-        await axios.post("https://asrvm.iis.sinica.edu.tw/demo/youtubeSrt", {
+      this.recognizeStatus = "上傳檔案中...(1/5)";
+
+      const res = await axios.post(
+        "https://asrvm.iis.sinica.edu.tw/demo/youtubeSrt",
+        {
           asrKind: useSettingStore().getAsrKind,
-          vid,
-        })
-      ).data;
+          vid
+        }
+      );
 
-      this.vid = data.vid;
+      if (res.status !== 200) {
+        alert(`上傳失敗, status_code: ${res.status}\n${res.data}`);
+        return;
+      }
 
-      console.log(data);
+      const result = await this.pollRecognizeStatus(res.data);
+
+      if (typeof result === "string" || result instanceof String) {
+        alert(`${result}`);
+        return;
+      }
+
+      this.vid = result.vid;
     },
     reset() {
       this.tempText = "";
       this.segments = [];
       this.currentTimeCode = 0;
       this.vid = undefined;
-    },
-  },
+    }
+  }
 });
