@@ -41,6 +41,11 @@
         >
           <img :src="fastForwardSVG" alt="fastForward" height="24" width="24"/>
         </button>
+        <button
+            @click="onDownloadClick()"
+        >
+          <img :src="downloadSVG" alt="downloadSVG" height="24" width="24"/>
+        </button>
       </div>
     </div>
   </div>
@@ -53,7 +58,9 @@ import playButtonSVG from "@/assets/svg/play-button.svg";
 import pauseSVG from "@/assets/svg/pause.svg";
 import fastForwardSVG from "@/assets/svg/fast-forward.svg";
 import rewindSVG from "@/assets/svg/rewind.svg";
+import downloadSVG from "@/assets/svg/download.svg";
 import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
+import { useMainResultStore } from "@/store/modules/mainResultStore";
 
 export default defineComponent({
   components: {AudioProgressBar},
@@ -67,6 +74,7 @@ export default defineComponent({
   setup(props) {
     const player = ref<HTMLAudioElement>();
     const audioPlayerStore = useAudioPlayerStore()
+    const mainResultStore = useMainResultStore()
 
     watchEffect(() => {
           if (player.value) {
@@ -77,6 +85,15 @@ export default defineComponent({
           flush: 'post'
         })
 
+    function onDownloadClick(){
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(new Blob([mainResultStore.getSubtitle], {type: 'text/plain'}));
+      link.setAttribute('download', 'result.srt');
+      link.click();
+      URL.revokeObjectURL(link.href);
+
+    }
+
 
     return {
       props,
@@ -86,6 +103,9 @@ export default defineComponent({
       pauseSVG,
       fastForwardSVG,
       rewindSVG,
+      downloadSVG,
+      mainResultStore,
+      onDownloadClick,
     };
   },
 });

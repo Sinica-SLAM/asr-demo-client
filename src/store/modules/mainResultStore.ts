@@ -8,6 +8,7 @@ import { useSettingStore } from "@/store/modules/settingStore";
 import axios from "axios";
 import { useAudioPlayerStore } from "@/store/modules/audioPlayerStore";
 import { WordAlignment } from "@/utils/dictate";
+import srtParser2 from "srt-parser-2";
 
 interface mainResultState {
   tempText: string;
@@ -17,6 +18,27 @@ interface mainResultState {
   type: "realtime" | "upload" | "youtube" | undefined;
   dictate: Dictate;
   vid: string | undefined;
+  recognizeStatus: string;
+}
+
+function padLeft(value: number, length = 2): string
+{
+  return value.toString().padStart(length, '0')
+}
+
+function formatTimestamp(
+  timestamp: number,
+) {
+  const date = new Date(0, 0, 0, 0, 0, 0, timestamp)
+
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+  const ms = Math.floor(
+    timestamp - (hours * 3600000 + minutes * 60000 + seconds * 1000)
+  )
+
+  return `${padLeft(hours)}:${padLeft(minutes)}:${padLeft(seconds)},${padLeft(ms, 3)}`
 }
 
 export const useMainResultStore = defineStore({
@@ -40,6 +62,7 @@ export const useMainResultStore = defineStore({
       state.type,
     getVid: (state): string | undefined => state.vid,
     getRecognizeStatus: (state): string => state.recognizeStatus,
+    getSubtitle: (state): string => (new srtParser2()).toSrt(state.segments.map((segment, i) => ({id: (i+1).toString(), startTime: formatTimestamp(segment.segmentStart.getTime()),endTime: formatTimestamp(segment.segmentStart.getTime() + segment.segmentLength),text: segment.wordAlignment.map(alignment => alignment.word).join(''),startSeconds:0,endSeconds:0}))),
   },
   actions: {
     appendFromDictate(res: WSResponse) {
