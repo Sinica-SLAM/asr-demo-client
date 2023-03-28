@@ -11,7 +11,7 @@
   </div>
 </template>
 <script lang="ts">
-import {defineComponent} from "@vue/runtime-core";
+import {defineComponent} from "vue";
 import {ref} from "vue";
 import "@/assets/scss/components/shared/dialog-box.scss"
 

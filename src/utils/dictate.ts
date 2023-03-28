@@ -1,7 +1,7 @@
 import Recorder from "@/recorder/recorder";
-import {useMainResultStore} from "@/store/modules/mainResultStore";
-import {Candidate} from "@/utils/candidates";
-import {useAudioPlayerStore} from "@/store/modules/audioPlayerStore";
+import { useMainResultStore } from "@/store/modules/mainResultStore";
+import { Candidate } from "@/utils/candidates";
+import { useAudioPlayerStore } from "@/store/modules/audioPlayerStore";
 
 class Dictate {
   constructor(config?: DictateConfig) {
@@ -65,7 +65,6 @@ class Dictate {
     try {
       this.setWebSocket();
       this.recorder?.startRecording();
-
     } catch (e) {
       console.log("No web socket support in this browser!");
     }
@@ -93,8 +92,15 @@ class Dictate {
 
   public async stopListening(): Promise<void> {
     try {
-      const url = URL.createObjectURL(await this.recorder?.stopRecording());
-      useAudioPlayerStore().setAudioURL(url)
+      let url = undefined;
+      if (this.recorder) {
+        url = URL.createObjectURL(await this.recorder.stopRecording());
+      }else{
+        return 
+      }
+
+
+      useAudioPlayerStore().setAudioURL(url);
 
       this.ws?.send("EOS");
     } catch (e) {
@@ -104,9 +110,11 @@ class Dictate {
 
   private onResult = (res: WSResponse): void => {
     if (res.result?.final) {
-      useMainResultStore().appendFromDictate(res)
+      useMainResultStore().appendFromDictate(res);
     } else {
-      useMainResultStore().setTempText((res.result?.hypotheses[0].transcript ?? "").replace(" ", ""))
+      useMainResultStore().setTempText(
+        (res.result?.hypotheses[0].transcript ?? "").replace(" ", "")
+      );
     }
 
     if (res.adaptation_state) {
@@ -201,7 +209,7 @@ export interface WordAlignment {
   length: number;
   word: string;
   confidence: number;
-  candidates: Candidate[]
+  candidates: Candidate[];
   token?: string;
 }
 
@@ -218,6 +226,5 @@ export interface PhoneAlignment {
   confidence: number;
   start: number; //second
 }
-
 
 export default Dictate;

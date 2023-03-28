@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import "@/assets/scss/components/home/YoutubeIframe/youtube-iframe.scss";
-import { defineComponent } from "@vue/runtime-core";
+import { computed, defineComponent } from "vue";
 import LoadingCircle from "@/components/shared/LoadingCircle.vue";
 
 export default defineComponent({

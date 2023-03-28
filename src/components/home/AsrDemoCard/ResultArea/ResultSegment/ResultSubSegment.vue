@@ -22,11 +22,11 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
 import ResultSegmentWord from "@/components/home/AsrDemoCard/ResultArea/ResultSegment/ResultSegmentWord.vue";
 import "@/assets/scss/components/home/AsrDemoCard/ResultArea/ResultSegment/result-sub-segment.scss";
-import { computed, PropType } from "vue";
+import { computed, PropType,defineComponent } from "vue";
 import { useMainResultStore } from "@/store/modules/mainResultStore";
 import { usePostResultStore } from "@/store/modules/postResultStore";
 import { useTranslateResultStore } from "@/store/modules/translateResultStore";
@@ -74,7 +74,7 @@ export default defineComponent({
           return useMainResultStore().segments[props.index].wordAlignment;
       }
     });
-    return { props, emit, wordAlignment, log: console.log };
+    return { props, emit, wordAlignment };
   },
 });
 </script>

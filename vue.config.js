@@ -9,8 +9,18 @@ module.exports = {
       cert: fs.readFileSync(`${__dirname}/cert/server.crt`),
     },
   },
+  chainWebpack: config => {
+    config.module
+      .rule('ts')
+      .use('ts-loader')
+        .tap(options => {
+          // modify the options...
+          options.compilerOptions = { module: "esnext"}
+          return options
+        })
+  },
   configureWebpack: {
-    plugins: [new ThreadsPlugin({ globalObject: "self" })],
+    plugins: [new ThreadsPlugin()],
   },
   pages: {
     index: {
@@ -18,4 +28,5 @@ module.exports = {
       title: "SinicaASR",
     },
   },
+  
 };

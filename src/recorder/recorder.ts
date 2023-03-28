@@ -1,6 +1,11 @@
 import {ModuleThread, spawn, Thread, Worker} from "threads";
 import {Record} from "@/recorder/worker";
 
+// @ts-expect-error it don't want .ts
+// eslint-disable-next-line 
+import workerURL from 'threads-plugin/dist/loader?name=worker!./worker.ts';
+
+
 export default class Recorder {
   private readonly option: {
     timeSlice: number;
@@ -51,7 +56,7 @@ export default class Recorder {
       return;
     }
     if (!this.worker) {
-      this.worker = await spawn<Record>(new Worker("@/recorder/worker"));
+      this.worker = await spawn<Record>(new Worker(workerURL));
     }
     await this.worker.init({sampleRate: this.source.context.sampleRate});
     this._recording = true;

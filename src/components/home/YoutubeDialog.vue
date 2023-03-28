@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import DialogBox from "@/components/shared/DialogBox.vue";
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent } from "vue";
 import "@/assets/scss/components/home/youtube-dialog.scss";
 import { ref } from "vue";
 import { useMainResultStore } from "@/store/modules/mainResultStore";
