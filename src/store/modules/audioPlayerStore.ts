@@ -27,7 +27,6 @@ export const useAudioPlayerStore = defineStore({
   actions: {
     setPlayer(newPlayer: HTMLAudioElement) {
       this.player = newPlayer;
-      console.log(this.player);
     },
     setAudioURL(newURL: string) {
       this.audioURL = newURL;
