@@ -56,7 +56,7 @@
         <a href="https://jamfly.github.io"> 鄭耀飛 (Yao-Fei Cheng) </a>
         <a href="mailto:freddy@iis.sinica.edu.tw">📧</a> &emsp;|&emsp;
         <a href="https://github.com/txya900619">陳力瑋 (Li-Wei Chen) </a>
-        <a href="wayne900619@gmail.com">📧</a>
+        <a href="mailto:wayne900619@gmail.com">📧</a>
         <br />
         <a href="https://homepage.iis.sinica.edu.tw/pages/whm/index_zh.html">
           王新民研究員 (Dr. Hsin-Min Wang)
