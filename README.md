@@ -1,4 +1,4 @@
-# asr-demo
+# asr-demo-client
 
 ## Structure
 
